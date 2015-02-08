@@ -1,1 +1,0 @@
-"./main.obj" "./library/adc.obj" "./library/io.obj" "./library/max31855.obj" "./library/spi.obj" "./library/timer.obj" "../lnk_msp430i2041.cmd" -l"libc.a" 
