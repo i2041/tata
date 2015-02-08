@@ -6,6 +6,8 @@
  */
 #define R1 47
 #define R2 4.7
+//#define Vref 1157	//mV
+#define Vref_ADC 35	//35ADC pear 0.001mV; 1.157.000uV / 32768
 #include <msp430i2041.h>
 void init_adc()
 {
@@ -23,7 +25,7 @@ void init_adc()
 	SD24PRE3  |= 0x08;
 	SD24CTL   |= SD24REFS;	//INTERNAL REFERINCE
 }
-int read_adc(int pin)
+uint16 read_adc(int pin)
 {
 	switch (pin)
 	{
@@ -66,13 +68,11 @@ void start_adc()
 	    	break;
 	    }
 }
-float voltage()
+uint32 voltage()
 {
-float retVal;
-
-	retVal = read_adc(2) - 32767;	//read RAW ADC
-	retVal = 1.154/32.767;//mV		//convert to mV (Vout)
-	retVal = ((retVal*(R1+R2))/(R2*1000));	//calculate Vin in mV
-
+uint32 retVal;
+retVal = read_adc(2) - 32768;	//read RAW ADC
+retVal *= Vref_ADC;				//calculate Vout
+retVal = ((retVal*11/1000);	//calculate Vin in mV, 11 = (R1+R2))/(R2)
 return retVal;
 }
