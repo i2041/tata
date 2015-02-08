@@ -11,8 +11,8 @@ void init_spi()
 {
 UCA0CTLW0 |= UCSWRST;
 
-P2OUT  |=  BIT1;	//Chip Select
-P2DIR  |=  BIT1;	//Chip Select
+P1OUT  |=  BIT5;	//Chip Select
+P1DIR  |=  BIT5;	//Chip Select
 P1SEL0 |= BIT1 + BIT2;
 //UCA0CTLW0 |= UCCKPL; 	//The inactive state is high
 UCA0CTLW0 |= UCMST;		//Master mode select
@@ -29,8 +29,8 @@ uint8 spi_read(uint8 NrOfBytes)
 
 if (NrOfBytes == 0)
 	{
-		P2OUT  |=  (BIT1); //  Unselect    Device
-		P2OUT  &=  (~BIT1);    //  Select  Device
+		P1OUT  |=  (BIT5); //  Unselect    Device
+		P1OUT  &=  (~BIT5);    //  Select  Device
 	}
 
 while  (!(UCA0IFG & UCTXIFG));    //  USCI_A0 TX  buffer  ready?
@@ -39,7 +39,7 @@ while  (!(UCA0IFG & UCRXIFG));    //  USCI_A0 RX  Received?
 
 if (NrOfBytes == 3)
 	{
-		P2OUT  |=  (BIT1); //  Unselect    Device
+		P1OUT  |=  (BIT5); //  Unselect    Device
 	}
 return UCA0RXBUF;  //  Store   received    data
 }

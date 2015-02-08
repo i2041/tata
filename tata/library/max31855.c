@@ -44,11 +44,11 @@ float ThermoCoupleTemperature()
 	}
 	return retVal;
 }
-float InternalTemperature(uint8 readCoupleTemerature)
+float InternalTemperature()
 {
 	float retVal;
 	uint16 Internal_temperature;
-	if (readCoupleTemerature)
+	if (VERIFY_FAULT_COUPLE)
 	{
 		Internal_temperature = spi_read(0);
 		Internal_temperature = spi_read(1);

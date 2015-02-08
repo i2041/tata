@@ -15,7 +15,7 @@
 #define OC_ERROR	3111
 #define VERIFY_FAULT_COUPLE 1
 float ThermoCoupleTemperature();
-float InternalTemperature(uint8 readCoupleTemerature);
+float InternalTemperature();
 
 
 #endif /* MAX31855_H_ */
