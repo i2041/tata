@@ -9,6 +9,7 @@
 //#define Vref 1157	//mV
 #define Vref_ADC 35	//35ADC pear 0.001mV; 1.157.000uV / 32768
 #include <msp430i2041.h>
+#include "commontypes.h"
 void init_adc()
 {
 	SD24CCTL0 |= SD24SNGL + SD24OSR_256 + SD24IE;
@@ -73,6 +74,6 @@ uint32 voltage()
 uint32 retVal;
 retVal = read_adc(2) - 32768;	//read RAW ADC
 retVal *= Vref_ADC;				//calculate Vout
-retVal = ((retVal*11/1000);	//calculate Vin in mV, 11 = (R1+R2))/(R2)
+retVal = (retVal*11/1000);	//calculate Vin in mV, 11 = (R1+R2))/(R2)
 return retVal;
 }
