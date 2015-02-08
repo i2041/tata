@@ -134,7 +134,7 @@ all: tataMosfet\ v2.0.out
 tataMosfet\ v2.0.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MSP430 Linker'
-	"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/bin/cl430" -vmsp --abi=eabi --use_hw_mpy=16 --advice:power=all -g --define=__MSP430i2041__ --diag_warning=225 --display_error_number --diag_wrap=off --printf_support=minimal -z -m"tataMosfet v2.0.map" --heap_size=80 --stack_size=80 -i"c:/ti/ccsv6/ccs_base/msp430/include" -i"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/lib" -i"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="tataMosfet v2.0_linkInfo.xml" --rom_model -o "tataMosfet v2.0.out" $(ORDERED_OBJS)
+	"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/bin/cl430" -vmsp --abi=eabi -Ooff --use_hw_mpy=16 --advice:power=all -g --define=__MSP430i2041__ --diag_warning=225 --display_error_number --diag_wrap=off --printf_support=minimal -z -m"tataMosfet v2.0.map" --heap_size=80 --stack_size=80 -i"c:/ti/ccsv6/ccs_base/msp430/include" -i"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/lib" -i"c:/ti/ccsv6/tools/compiler/ti-cgt-msp430_4.4.2/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="tataMosfet v2.0_linkInfo.xml" --rom_model -o "tataMosfet v2.0.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

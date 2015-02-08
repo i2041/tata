@@ -1,10 +1,10 @@
 ******************************************************************************
                   MSP430 Linker PC v4.4.2                      
 ******************************************************************************
->> Linked Thu Feb 05 00:22:06 2015
+>> Linked Sun Feb 08 23:51:12 2015
 
 OUTPUT FILE NAME:   <tataMosfet v2.0.out>
-ENTRY POINT SYMBOL: "_c_int00_noargs_noexit"  address: 00008602
+ENTRY POINT SYMBOL: "_c_int00_noargs_noexit"  address: 0000879c
 
 
 MEMORY CONFIGURATION
@@ -16,7 +16,7 @@ MEMORY CONFIGURATION
   PERIPHERALS_16BIT     00000100   00000100  00000000  00000100  RWIX
   RAM                   00000200   00000800  0000005a  000007a6  RWIX
   INFOA                 00001000   00000400  00000000  00000400  RWIX
-  FLASH                 00008000   00007fe0  000006b0  00007930  RWIX
+  FLASH                 00008000   00007fe0  00000870  00007770  RWIX
   INT00                 0000ffe0   00000002  00000000  00000002  RWIX
   INT01                 0000ffe2   00000002  00000002  00000000  RWIX
   INT02                 0000ffe4   00000002  00000000  00000002  RWIX
@@ -51,41 +51,44 @@ section   page    origin      length       input sections
                   000009b0    00000002     rts430_eabi.lib : boot.obj (.stack)
                   000009b2    0000004e     --HOLE--
 
-.text      0    00008000    00000698     
+.text      0    00008000    00000858     
                   00008000    00000130     rts430_eabi.lib : fs_add.obj (.text)
-                  00008130    00000094     max31855.obj (.text:ThermoCoupleTemperature)
-                  000081c4    00000090     timer.obj (.text:init_timer)
-                  00008254    00000088     max31855.obj (.text:InternalTemperature)
-                  000082dc    0000007a     timer.obj (.text:Timer_A0)
-                  00008356    00000064     rts430_eabi.lib : copy_decompress_rle.obj (.text:__TI_decompress_rle_core)
-                  000083ba    00000058                     : autoinit.obj (.text:_auto_init)
-                  00008412    0000004c                     : lsr16.obj (.text)
-                  0000845e    00000044     adc.obj (.text:SD24AISR)
-                  000084a2    00000042     adc.obj (.text:init_adc)
-                  000084e4    00000040     io.obj (.text:write_io)
-                  00008524    00000030     spi.obj (.text:init_spi)
-                  00008554    00000030     spi.obj (.text:spi_read)
-                  00008584    00000024     main.obj (.text:main)
-                  000085a8    00000024     rts430_eabi.lib : fs_utof.obj (.text)
-                  000085cc    0000001c     main.obj (.text:task100ms)
-                  000085e8    0000001a     timer.obj (.text:Timer_A1)
-                  00008602    0000001a     rts430_eabi.lib : boot_special.obj (.text:_c_int00_noargs_noexit)
-                  0000861c    00000014                     : copy_zero_init.obj (.text:decompress:ZI:__TI_zero_init)
-                  00008630    00000012                     : copy_decompress_none.obj (.text:decompress:none:__TI_decompress_none)
-                  00008642    00000012                     : memcpy.obj (.text:memcpy)
-                  00008654    00000012     adc.obj (.text:start_adc)
-                  00008666    00000010     rts430_eabi.lib : epilog.obj (.text)
-                  00008676    0000000e     io.obj (.text:init_io)
-                  00008684    00000006     rts430_eabi.lib : isr_trap.obj (.text:_isr:__TI_ISR_TRAP)
-                  0000868a    00000006                     : copy_decompress_rle.obj (.text:decompress:rle24:__TI_decompress_rle24)
-                  00008690    00000004                     : pre_init.obj (.text:_system_pre_init)
-                  00008694    00000004                     : exit.obj (.text:abort)
+                  00008130    00000112     max31855.obj (.text:ThermoCoupleTemperature)
+                  00008242    000000f6     max31855.obj (.text:InternalTemperature)
+                  00008338    000000ae     timer.obj (.text:init_timer)
+                  000083e6    0000007a     timer.obj (.text:Timer_A0)
+                  00008460    00000064     rts430_eabi.lib : copy_decompress_rle.obj (.text:__TI_decompress_rle_core)
+                  000084c4    00000058                     : autoinit.obj (.text:_auto_init)
+                  0000851c    00000058     io.obj (.text:write_io)
+                  00008574    0000004e     adc.obj (.text:SD24AISR)
+                  000085c2    0000004c     rts430_eabi.lib : lsr16.obj (.text)
+                  0000860e    00000046     adc.obj (.text:init_adc)
+                  00008654    00000042     spi.obj (.text:spi_read)
+                  00008696    00000036     rts430_eabi.lib : fs_itof.obj (.text)
+                  000086cc    00000034     spi.obj (.text:init_spi)
+                  00008700    0000002c     rts430_eabi.lib : asr16.obj (.text)
+                  0000872c    00000028     timer.obj (.text:Timer_A1)
+                  00008754    00000024     main.obj (.text:init)
+                  00008778    00000024     rts430_eabi.lib : fs_utof.obj (.text)
+                  0000879c    0000001a                     : boot_special.obj (.text:_c_int00_noargs_noexit)
+                  000087b6    0000001a     main.obj (.text:task100ms)
+                  000087d0    00000014     rts430_eabi.lib : copy_zero_init.obj (.text:decompress:ZI:__TI_zero_init)
+                  000087e4    00000012                     : copy_decompress_none.obj (.text:decompress:none:__TI_decompress_none)
+                  000087f6    00000012                     : memcpy.obj (.text:memcpy)
+                  00008808    00000012     adc.obj (.text:start_adc)
+                  0000881a    00000010     rts430_eabi.lib : epilog.obj (.text)
+                  0000882a    0000000e     io.obj (.text:init_io)
+                  00008838    0000000c     main.obj (.text:main)
+                  00008844    00000006     rts430_eabi.lib : isr_trap.obj (.text:_isr:__TI_ISR_TRAP)
+                  0000884a    00000006                     : copy_decompress_rle.obj (.text:decompress:rle24:__TI_decompress_rle24)
+                  00008850    00000004                     : pre_init.obj (.text:_system_pre_init)
+                  00008854    00000004                     : exit.obj (.text:abort)
 
-.cinit     0    00008698    00000018     
-                  00008698    00000006     (.cinit..data.load) [load image]
-                  0000869e    00000006     (__TI_handler_table)
-                  000086a4    00000004     (.cinit..bss.load) [load image, compression = zero_init]
-                  000086a8    00000008     (__TI_cinit_table)
+.cinit     0    00008858    00000018     
+                  00008858    00000006     (.cinit..data.load) [load image]
+                  0000885e    00000006     (__TI_handler_table)
+                  00008864    00000004     (.cinit..bss.load) [load image, compression = zero_init]
+                  00008868    00000008     (__TI_cinit_table)
 
 .init_array 
 *          0    00008000    00000000     UNINITIALIZED
@@ -139,14 +142,14 @@ NMI        0    0000fffc    00000002
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 000086a8 records: 2, size/record: 4, table size: 8
-	.data: load addr=00008698, load size=00000006 bytes, run addr=00000208, run size=00000002 bytes, compression=copy
-	.bss: load addr=000086a4, load size=00000004 bytes, run addr=00000200, run size=00000008 bytes, compression=zero_init
+__TI_cinit_table @ 00008868 records: 2, size/record: 4, table size: 8
+	.data: load addr=00008858, load size=00000006 bytes, run addr=00000208, run size=00000002 bytes, compression=copy
+	.bss: load addr=00008864, load size=00000004 bytes, run addr=00000200, run size=00000008 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 0000869e records: 3, size/record: 2, table size: 6
+__TI_handler_table @ 0000885e records: 3, size/record: 2, table size: 6
 	index: 0, handler: __TI_zero_init
 	index: 1, handler: __TI_decompress_rle24
 	index: 2, handler: __TI_decompress_none
@@ -156,7 +159,7 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                    
 -------   ----                    
-00008694  C$$EXIT                 
+00008854  C$$EXIT                 
 00000050  CSCTL0                  
 00000051  CSCTL1                  
 00000054  CSERFCAL                
@@ -168,7 +171,7 @@ address   name
 0000012c  FCTL3                   
 00000000  IE1                     
 00000002  IFG1                    
-00008254  InternalTemperature     
+00008242  InternalTemperature     
 00000060  LPM45CTL                
 00000134  MAC                     
 00000136  MACS                    
@@ -205,7 +208,7 @@ address   name
 00000063  REFCAL1                 
 0000013c  RESHI                   
 0000013a  RESLO                   
-0000845e  SD24AISR                
+00008574  SD24AISR                
 00000102  SD24CCTL0               
 00000104  SD24CCTL1               
 00000106  SD24CCTL2               
@@ -248,8 +251,8 @@ address   name
 00000200  TCouple                 
 00000204  TIntern                 
 00008130  ThermoCoupleTemperature 
-000082dc  Timer_A0                
-000085e8  Timer_A1                
+000083e6  Timer_A0                
+0000872c  Timer_A1                
 00000150  UCA0ABCTL               
 00000146  UCA0BRW                 
 00000147  UCA0BRW_H               
@@ -333,15 +336,15 @@ address   name
 00000120  WDTCTL                  
 00000a00  __STACK_END             
 00000050  __STACK_SIZE            
-000086a8  __TI_CINIT_Base         
-000086b0  __TI_CINIT_Limit        
-0000869e  __TI_Handler_Table_Base 
-000086a4  __TI_Handler_Table_Limit
+00008868  __TI_CINIT_Base         
+00008870  __TI_CINIT_Limit        
+0000885e  __TI_Handler_Table_Base 
+00008864  __TI_Handler_Table_Limit
 UNDEFED   __TI_INITARRAY_Base     
 UNDEFED   __TI_INITARRAY_Limit    
-00008684  __TI_ISR_TRAP           
-00008630  __TI_decompress_none    
-0000868a  __TI_decompress_rle24   
+00008844  __TI_ISR_TRAP           
+000087e4  __TI_decompress_none    
+0000884a  __TI_decompress_rle24   
 0000ffe2  __TI_int01              
 0000ffe8  __TI_int04              
 0000ffea  __TI_int05              
@@ -354,52 +357,70 @@ UNDEFED   __TI_INITARRAY_Limit
 0000fff8  __TI_int12              
 0000fffa  __TI_int13              
 0000fffc  __TI_int14              
-0000861c  __TI_zero_init          
+000087d0  __TI_zero_init          
 ffffffff  __binit__               
 ffffffff  __c_args__              
 00008006  __mspabi_addf           
-000085a8  __mspabi_fltuf          
-00008672  __mspabi_func_epilog_1  
-00008670  __mspabi_func_epilog_2  
-0000866e  __mspabi_func_epilog_3  
-0000866c  __mspabi_func_epilog_4  
-0000866a  __mspabi_func_epilog_5  
-00008668  __mspabi_func_epilog_6  
-00008666  __mspabi_func_epilog_7  
-00008412  __mspabi_srli           
-00008458  __mspabi_srli_1         
-00008434  __mspabi_srli_10        
-00008430  __mspabi_srli_11        
-0000842c  __mspabi_srli_12        
-00008428  __mspabi_srli_13        
-00008424  __mspabi_srli_14        
-00008420  __mspabi_srli_15        
-00008454  __mspabi_srli_2         
-00008450  __mspabi_srli_3         
-0000844c  __mspabi_srli_4         
-00008448  __mspabi_srli_5         
-00008444  __mspabi_srli_6         
-00008440  __mspabi_srli_7         
-0000843c  __mspabi_srli_8         
-00008438  __mspabi_srli_9         
+00008696  __mspabi_fltif          
+00008778  __mspabi_fltuf          
+00008826  __mspabi_func_epilog_1  
+00008824  __mspabi_func_epilog_2  
+00008822  __mspabi_func_epilog_3  
+00008820  __mspabi_func_epilog_4  
+0000881e  __mspabi_func_epilog_5  
+0000881c  __mspabi_func_epilog_6  
+0000881a  __mspabi_func_epilog_7  
+00008700  __mspabi_srai           
+00008728  __mspabi_srai_1         
+00008716  __mspabi_srai_10        
+00008714  __mspabi_srai_11        
+00008712  __mspabi_srai_12        
+00008710  __mspabi_srai_13        
+0000870e  __mspabi_srai_14        
+0000870c  __mspabi_srai_15        
+00008726  __mspabi_srai_2         
+00008724  __mspabi_srai_3         
+00008722  __mspabi_srai_4         
+00008720  __mspabi_srai_5         
+0000871e  __mspabi_srai_6         
+0000871c  __mspabi_srai_7         
+0000871a  __mspabi_srai_8         
+00008718  __mspabi_srai_9         
+000085c2  __mspabi_srli           
+00008608  __mspabi_srli_1         
+000085e4  __mspabi_srli_10        
+000085e0  __mspabi_srli_11        
+000085dc  __mspabi_srli_12        
+000085d8  __mspabi_srli_13        
+000085d4  __mspabi_srli_14        
+000085d0  __mspabi_srli_15        
+00008604  __mspabi_srli_2         
+00008600  __mspabi_srli_3         
+000085fc  __mspabi_srli_4         
+000085f8  __mspabi_srli_5         
+000085f4  __mspabi_srli_6         
+000085f0  __mspabi_srli_7         
+000085ec  __mspabi_srli_8         
+000085e8  __mspabi_srli_9         
 00008000  __mspabi_subf           
-000083ba  _auto_init              
-00008602  _c_int00_noargs_noexit  
+000084c4  _auto_init              
+0000879c  _c_int00_noargs_noexit  
 0000fffe  _reset_vector           
 000009b0  _stack                  
-00008690  _system_pre_init        
-00008694  abort                   
+00008850  _system_pre_init        
+00008854  abort                   
 ffffffff  binit                   
-000084a2  init_adc                
-00008676  init_io                 
-00008524  init_spi                
-000081c4  init_timer              
-00008584  main                    
-00008642  memcpy                  
-00008554  spi_read                
-00008654  start_adc               
-000085cc  task100ms               
-000084e4  write_io                
+00008754  init                    
+0000860e  init_adc                
+0000882a  init_io                 
+000086cc  init_spi                
+00008338  init_timer              
+00008838  main                    
+000087f6  memcpy                  
+00008654  spi_read                
+00008808  start_adc               
+000087b6  task100ms               
+0000851c  write_io                
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -581,57 +602,75 @@ address   name
 00008000  __mspabi_subf           
 00008006  __mspabi_addf           
 00008130  ThermoCoupleTemperature 
-000081c4  init_timer              
-00008254  InternalTemperature     
-000082dc  Timer_A0                
-000083ba  _auto_init              
-00008412  __mspabi_srli           
-00008420  __mspabi_srli_15        
-00008424  __mspabi_srli_14        
-00008428  __mspabi_srli_13        
-0000842c  __mspabi_srli_12        
-00008430  __mspabi_srli_11        
-00008434  __mspabi_srli_10        
-00008438  __mspabi_srli_9         
-0000843c  __mspabi_srli_8         
-00008440  __mspabi_srli_7         
-00008444  __mspabi_srli_6         
-00008448  __mspabi_srli_5         
-0000844c  __mspabi_srli_4         
-00008450  __mspabi_srli_3         
-00008454  __mspabi_srli_2         
-00008458  __mspabi_srli_1         
-0000845e  SD24AISR                
-000084a2  init_adc                
-000084e4  write_io                
-00008524  init_spi                
-00008554  spi_read                
-00008584  main                    
-000085a8  __mspabi_fltuf          
-000085cc  task100ms               
-000085e8  Timer_A1                
-00008602  _c_int00_noargs_noexit  
-0000861c  __TI_zero_init          
-00008630  __TI_decompress_none    
-00008642  memcpy                  
-00008654  start_adc               
-00008666  __mspabi_func_epilog_7  
-00008668  __mspabi_func_epilog_6  
-0000866a  __mspabi_func_epilog_5  
-0000866c  __mspabi_func_epilog_4  
-0000866e  __mspabi_func_epilog_3  
-00008670  __mspabi_func_epilog_2  
-00008672  __mspabi_func_epilog_1  
-00008676  init_io                 
-00008684  __TI_ISR_TRAP           
-0000868a  __TI_decompress_rle24   
-00008690  _system_pre_init        
-00008694  C$$EXIT                 
-00008694  abort                   
-0000869e  __TI_Handler_Table_Base 
-000086a4  __TI_Handler_Table_Limit
-000086a8  __TI_CINIT_Base         
-000086b0  __TI_CINIT_Limit        
+00008242  InternalTemperature     
+00008338  init_timer              
+000083e6  Timer_A0                
+000084c4  _auto_init              
+0000851c  write_io                
+00008574  SD24AISR                
+000085c2  __mspabi_srli           
+000085d0  __mspabi_srli_15        
+000085d4  __mspabi_srli_14        
+000085d8  __mspabi_srli_13        
+000085dc  __mspabi_srli_12        
+000085e0  __mspabi_srli_11        
+000085e4  __mspabi_srli_10        
+000085e8  __mspabi_srli_9         
+000085ec  __mspabi_srli_8         
+000085f0  __mspabi_srli_7         
+000085f4  __mspabi_srli_6         
+000085f8  __mspabi_srli_5         
+000085fc  __mspabi_srli_4         
+00008600  __mspabi_srli_3         
+00008604  __mspabi_srli_2         
+00008608  __mspabi_srli_1         
+0000860e  init_adc                
+00008654  spi_read                
+00008696  __mspabi_fltif          
+000086cc  init_spi                
+00008700  __mspabi_srai           
+0000870c  __mspabi_srai_15        
+0000870e  __mspabi_srai_14        
+00008710  __mspabi_srai_13        
+00008712  __mspabi_srai_12        
+00008714  __mspabi_srai_11        
+00008716  __mspabi_srai_10        
+00008718  __mspabi_srai_9         
+0000871a  __mspabi_srai_8         
+0000871c  __mspabi_srai_7         
+0000871e  __mspabi_srai_6         
+00008720  __mspabi_srai_5         
+00008722  __mspabi_srai_4         
+00008724  __mspabi_srai_3         
+00008726  __mspabi_srai_2         
+00008728  __mspabi_srai_1         
+0000872c  Timer_A1                
+00008754  init                    
+00008778  __mspabi_fltuf          
+0000879c  _c_int00_noargs_noexit  
+000087b6  task100ms               
+000087d0  __TI_zero_init          
+000087e4  __TI_decompress_none    
+000087f6  memcpy                  
+00008808  start_adc               
+0000881a  __mspabi_func_epilog_7  
+0000881c  __mspabi_func_epilog_6  
+0000881e  __mspabi_func_epilog_5  
+00008820  __mspabi_func_epilog_4  
+00008822  __mspabi_func_epilog_3  
+00008824  __mspabi_func_epilog_2  
+00008826  __mspabi_func_epilog_1  
+0000882a  init_io                 
+00008838  main                    
+00008844  __TI_ISR_TRAP           
+0000884a  __TI_decompress_rle24   
+00008850  _system_pre_init        
+00008854  C$$EXIT                 
+00008854  abort                   
+0000885e  __TI_Handler_Table_Base 
+00008864  __TI_Handler_Table_Limit
+00008868  __TI_CINIT_Base         
+00008870  __TI_CINIT_Limit        
 0000ffe2  __TI_int01              
 0000ffe8  __TI_int04              
 0000ffea  __TI_int05              
@@ -651,4 +690,4 @@ ffffffff  binit
 UNDEFED   __TI_INITARRAY_Base     
 UNDEFED   __TI_INITARRAY_Limit    
 
-[244 symbols]
+[262 symbols]
