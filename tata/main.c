@@ -11,13 +11,11 @@ float TIntern=0;
 uint32 Voltage=0;
 
 void main(void) {
-	watchdog_config();
-	//__enable_interrupt();
-	init_io();
-	write_io(10,0);
-	write_io(22,0);
-	write_io(23,0);
-	_bis_SR_register(GIE+CPUOFF+OSCOFF+SCG1);
+	watchdog_config(stop);
+
+	go_to_sleep();
+
+	watchdog_config(stop);
 	init();
 	while (1)
 	{}
@@ -32,32 +30,34 @@ void task100ms()
 void init()
 {
 	init_io();
-	//go_to_sleep();
 	init_spi();
 	TCouple = ThermoCoupleTemperature();
 	TIntern = InternalTemperature();
 	__enable_interrupt();
 	init_adc();
 	start_adc(2);
-	//__enable_interrupt();
-
 	while ((TCouple==0) || (TIntern==0) || (Voltage==0)){}	//white interrupt flag ADC to go next
-	init_timer(1,16,0xC350);			//tasc 100ms 0x1388  1s -0xC350
+	init_timer(1,16,0xC350);								//task 100ms 0x1388  1s -0xC350
 }
 void go_to_sleep()
 {
+	init_io();
+	write_io(10,0);
+	write_io(22,0);
+	write_io(23,0);
 	_bis_SR_register(GIE+CPUOFF+OSCOFF+SCG1);
 }
 void wakeUp()
 {
-	init_timer(1,16,0xC350);			//tasc 100ms 0x1388  1s -0xC350
-}
-#pragma vector=WDT_VECTOR
-__interrupt void wdttimer(void)
-{
-	IFG1&=~WDTIFG;
-}
-void config_wakeup()
-{
 
+	//_bic_SR_register(GIE+CPUOFF+OSCOFF+SCG1);
 }
+//#pragma vector=WDT_VECTOR
+//__interrupt void wdttimer(void)
+//{
+//	IFG1&=~WDTIFG;
+//}
+//void config_wakeup()
+//{
+//
+//}

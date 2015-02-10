@@ -7,6 +7,10 @@
 
 #ifndef WATCHDOG_H_
 #define WATCHDOG_H_
+#define stop 0
+#define start 1
+#include <msp430i2041.h>
+#include "commontypes.h"
 /*
 15 		14 		13 		12 		11 		10 		9 		8
 						WDTPW
@@ -39,6 +43,6 @@ WDTIS		Watchdog timer interval select. These bits select the watchdog timer inte
 				10b = Watchdog clock source /512
 				11b = Watchdog clock source /64
 */
-void watchdog_config();
+void watchdog_config(uint8 state);
 
 #endif /* WATCHDOG_H_ */

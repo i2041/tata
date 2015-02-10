@@ -44,6 +44,12 @@ void write_io(int pin,int state)
 #pragma vector=PORT2_VECTOR
 __interrupt void Port_2(void)
 {
-	_BIC_SR(LPM4_EXIT); // wake up from low power mode
-	 P2IFG &= ~BIT1;
+	switch(P2IV)
+	{
+	case 4: 	_BIC_SR(LPM4_EXIT); // wake up from low power mode
+				P2IFG &= ~BIT1;
+				//wakeUp();
+				break;
+	default: __enable_interrupt();break;
+	}
 }

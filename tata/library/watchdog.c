@@ -5,10 +5,9 @@
  *      Author: uidg6243
  */
 #include "watchdog.h"
-#include <msp430i2041.h>
-void watchdog_config()
+
+void watchdog_config(uint8 state)
 {
-	WDTCTL=WDTPW+WDTHOLD;
-	//WDTCTL = WDTPW + WDTCNTCL;
-	//IE1=WDTIFG;
+	if (state == 0) {WDTCTL=WDTPW+WDTHOLD;}
+	if (state == 1)	{WDTCTL = WDTPW + WDTCNTCL;IE1=WDTIFG;}
 }
