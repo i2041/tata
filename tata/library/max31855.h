@@ -17,5 +17,4 @@
 float ThermoCoupleTemperature();
 float InternalTemperature();
 
-
 #endif /* MAX31855_H_ */

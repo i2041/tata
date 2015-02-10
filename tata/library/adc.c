@@ -4,12 +4,15 @@
  *  Created on: 04 џэт. 2015 у.
  *      Author: Serghei
  */
-#define R1 47
-#define R2 4.7
-//#define Vref 1157	//mV
-#define Vref_ADC 35	//35ADC pear 0.001mV; 1.157.000uV / 32768
+#define R1 49900
+#define R2 2825
+//#define Vref 1175	//mV
+#define Vref_ADC 3550	//35ADC pear 0.001mV; 1.157.000uV / 32768
 #include <msp430i2041.h>
 #include "commontypes.h"
+#include "adc.h"
+extern uint32 Voltage;
+
 void init_adc()
 {
 	SD24CCTL0 |= SD24SNGL + SD24OSR_256 + SD24IE + SD24DF;
@@ -37,17 +40,19 @@ uint16 read_adc(int pin)
 		default:{return 0;}
 	}
 }
-void start_adc()
+void start_adc(uint8 chanal)
 {
-	SD24CCTL0 |= SD24SC;
-	SD24CCTL1 |= SD24SC;
-	SD24CCTL2 |= SD24SC;
-	SD24CCTL3 |= SD24SC;
+	switch (chanal)
+	{
+	case 0: SD24CCTL0 |= SD24SC;break;
+	case 1: SD24CCTL1 |= SD24SC;break;
+	case 2: SD24CCTL2 |= SD24SC;break;
+	case 3: SD24CCTL3 |= SD24SC;break;
+	}
 }
 #pragma vector=SD24_VECTOR
   __interrupt void SD24AISR(void)
 {
-	  volatile double tmp=0;
 	  switch (SD24IV)
 	    {
 	    case 2:                                   // SD24MEM Overflow
@@ -61,19 +66,26 @@ void start_adc()
 	        //__enable_interrupt();
 	    	break;
 	    case 8:                                   // SD24MEM2 IFG
-	    	SD24CCTL2 &= ~SD24IFG;
-	        //__enable_interrupt();
+	    	//SD24CCTL2 &= ~SD24IFG;
+	    	Voltage = read_adc(2);	//read RAW ADC
+	    	Voltage = (Voltage * Vref_ADC)/100000;				//calculate Vout
+	    	Voltage = (Voltage*1879)/100;	//calculate Vin in mV, 18.36 = (R1+R2))/(R2)
+	    	//__enable_interrupt();
 			break;
 	    case 10:
-	    	SD24CCTL3 &= ~SD24IFG;
+	    	SD24CCTL3 &= ~SD24IFG; 				  // SD24MEM3 IFG
 	    	break;
 	    }
 }
-uint32 voltage()
-{
-uint32 retVal;
-retVal = read_adc(2) - 32768;	//read RAW ADC
-retVal *= Vref_ADC;				//calculate Vout
-retVal = (retVal*11/1000);	//calculate Vin in mV, 11 = (R1+R2))/(R2)
-return retVal;
-}
+//uint32 voltage()
+//{
+//uint32 retVal=0;
+//uint32 retVal1=0;
+//uint32 retVal2=0;
+//start_adc();
+////while (!(SD24CCTL2 & SD24IFG)){}	//white interrupt flag ADC to go next
+//retVal = read_adc(2);	//read RAW ADC
+//retVal = (retVal * Vref_ADC)/100000;				//calculate Vout
+//retVal = (retVal*1872)/100;	//calculate Vin in mV, 18.36 = (R1+R2))/(R2)
+//return retVal2;
+//}

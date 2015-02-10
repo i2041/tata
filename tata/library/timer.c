@@ -91,7 +91,7 @@ __interrupt void Timer_A0 (void)
 //	P1OUT ^= 0x01;
 //	P2OUT ^= 0x04;
 //	P2OUT ^= 0x08;
-	start_adc();
+	start_adc(2);
 	task100ms();
 	a++;//In this case, it will loop until the variable i increments to 20000.
 	if (a>1) a=0;
