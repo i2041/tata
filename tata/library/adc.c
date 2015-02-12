@@ -4,14 +4,8 @@
  *  Created on: 04 џэт. 2015 у.
  *      Author: Serghei
  */
-#define R1 49900
-#define R2 2825
-//#define Vref 1175	//mV
-#define Vref_ADC 3550	//35ADC pear 0.001mV; 1.157.000uV / 32768
 #include <msp430i2041.h>
-#include "commontypes.h"
 #include "adc.h"
-extern uint32 Voltage;
 
 void init_adc()
 {
@@ -77,15 +71,3 @@ void start_adc(uint8 chanal)
 	    	break;
 	    }
 }
-//uint32 voltage()
-//{
-//uint32 retVal=0;
-//uint32 retVal1=0;
-//uint32 retVal2=0;
-//start_adc();
-////while (!(SD24CCTL2 & SD24IFG)){}	//white interrupt flag ADC to go next
-//retVal = read_adc(2);	//read RAW ADC
-//retVal = (retVal * Vref_ADC)/100000;				//calculate Vout
-//retVal = (retVal*1872)/100;	//calculate Vin in mV, 18.36 = (R1+R2))/(R2)
-//return retVal2;
-//}

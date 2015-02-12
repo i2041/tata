@@ -8,6 +8,6 @@
 
 void watchdog_config(uint8 state)
 {
-	if (state == 0) {WDTCTL=WDTPW+WDTHOLD;}
-	if (state == 1)	{WDTCTL = WDTPW + WDTCNTCL;IE1=WDTIFG;}
+	if (state == stop) 	{WDTCTL=WDTPW+WDTHOLD;}
+	if (state == start)	{WDTCTL = WDTPW + WDTCNTCL + 0x0003;IE1=WDTIFG;}
 }

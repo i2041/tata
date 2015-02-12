@@ -5,15 +5,12 @@
  *      Author: Serghei
  */
 #include <msp430i2041.h>
+#include "io.h"
 void init_io()
 {
 	P1DIR|= 0x01;	//For P1.0 	0000 0001
 	P2DIR |= 0x04;	//For P2.2 	0000 0100
 	P2DIR |= 0x08;	//For P2.3 	0000 1000
-
-	P2DIR &= ~BIT1; // Set P2.1 to input direction
-	P2IES &= ~BIT1;	//on raising
-	P2IE |= BIT1; // enable P2.1 interrupt
 }
 void write_io(int pin,int state)
 {
@@ -47,8 +44,19 @@ __interrupt void Port_2(void)
 	switch(P2IV)
 	{
 	case 4: 	_BIC_SR(LPM4_EXIT); // wake up from low power mode
-				P2IFG &= ~BIT1;
-				//wakeUp();
+
+				if(P2IN &= BIT1)
+				{
+					risingTime = GlobalTimer;
+					risingFlag = true;
+					//activeMode = false;
+					comand_executed = false;
+					init();
+				}
+				else {risingFlag = false;}
+
+				P2IES ^= BIT1; // Toggle Edge sensitivity
+				P2IFG &= ~BIT1;	// Clear Interrupt Flag
 				break;
 	default: __enable_interrupt();break;
 	}
