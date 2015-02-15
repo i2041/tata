@@ -22,27 +22,27 @@ void init_adc()
 	SD24PRE2  |= 0x08;
 	SD24PRE3  |= 0x08;
 	SD24CTL   |= SD24REFS;	//INTERNAL REFERINCE
+
+	Voltage = 0;
+	RunTime = 0;
 }
 uint16 read_adc(int pin)
 {
 	switch (pin)
 	{
 		case 0:{return SD24MEM0;}
-		case 1:{return SD24MEM1;}
+		case 1:{return SD24MEM1;}	//for MinTemperature
 		case 2:{return SD24MEM2;}
 		case 3:{return SD24MEM3;}
 		default:{return 0;}
 	}
 }
-void start_adc(uint8 chanal)
+void start_adc()
 {
-	switch (chanal)
-	{
-	case 0: SD24CCTL0 |= SD24SC;break;
-	case 1: SD24CCTL1 |= SD24SC;break;
-	case 2: SD24CCTL2 |= SD24SC;break;
-	case 3: SD24CCTL3 |= SD24SC;break;
-	}
+	SD24CCTL0 |= SD24SC;
+	SD24CCTL1 |= SD24SC;
+	SD24CCTL2 |= SD24SC;
+	SD24CCTL3 |= SD24SC;
 }
 #pragma vector=SD24_VECTOR
   __interrupt void SD24AISR(void)
@@ -53,11 +53,14 @@ void start_adc(uint8 chanal)
 	    	break;
 	    case 4:                                   // SD24MEM0 IFG
 	    	SD24CCTL0 &= ~SD24IFG;
-	        //__enable_interrupt();
+
+	    	//__enable_interrupt();
 	        break;
 	    case 6:                                   // SD24MEM1 IFG
-	    	SD24CCTL1 &= ~SD24IFG;
-	        //__enable_interrupt();
+	    	//SD24CCTL1 &= ~SD24IFG;
+	    	min_Temperature =(read_adc(1));
+	    	min_Temperature = min_Temperature>>4; //32768 / 128 = maximum 256 grade Celsius
+	    	//__enable_interrupt();
 	    	break;
 	    case 8:                                   // SD24MEM2 IFG
 	    	//SD24CCTL2 &= ~SD24IFG;
@@ -67,7 +70,8 @@ void start_adc(uint8 chanal)
 	    	//__enable_interrupt();
 			break;
 	    case 10:
-	    	SD24CCTL3 &= ~SD24IFG; 				  // SD24MEM3 IFG
+	    	//SD24CCTL3 &= ~SD24IFG; 				  // SD24MEM3 IFG
+	    	RunTime = read_adc(3);
 	    	break;
 	    }
 }

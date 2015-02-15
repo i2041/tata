@@ -14,7 +14,8 @@
 #define SCG_ERROR 	3222
 #define OC_ERROR	3111
 #define VERIFY_FAULT_COUPLE 1
-float ThermoCoupleTemperature();
-float InternalTemperature();
-
+void ThermoCoupleTemperature();
+void InternalTemperature();
+float TCouple;
+float TIntern;
 #endif /* MAX31855_H_ */

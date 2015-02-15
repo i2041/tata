@@ -11,6 +11,7 @@ void init_io()
 	P1DIR|= 0x01;	//For P1.0 	0000 0001
 	P2DIR |= 0x04;	//For P2.2 	0000 0100
 	P2DIR |= 0x08;	//For P2.3 	0000 1000
+
 }
 void write_io(int pin,int state)
 {
@@ -53,7 +54,10 @@ __interrupt void Port_2(void)
 					comand_executed = false;
 					init();
 				}
-				else {risingFlag = false;}
+				else
+				{
+					risingFlag = false;
+				}
 
 				P2IES ^= BIT1; // Toggle Edge sensitivity
 				P2IFG &= ~BIT1;	// Clear Interrupt Flag

@@ -8,7 +8,7 @@
 
 #include "max31855.h"
 
-float ThermoCoupleTemperature()
+void ThermoCoupleTemperature()
 {
 	float retVal = 3000;
 	uint16 Tcouple_temperature;
@@ -42,9 +42,9 @@ float ThermoCoupleTemperature()
 		else if (Tcouple_temperature & 0x2) retVal = SCG_ERROR;
 		else retVal = OC_ERROR;
 	}
-	return retVal;
+	TCouple = retVal;
 }
-float InternalTemperature()
+void InternalTemperature()
 {
 	float retVal;
 	uint16 Internal_temperature;
@@ -75,5 +75,10 @@ float InternalTemperature()
 	  if(Internal_temperature& 0x40)  retVal+=0.25;
 	  if(Internal_temperature& 0x40)  retVal+=0.125;
 	  if(Internal_temperature& 0x40)  retVal+=0.0625;
-	return retVal;
+	  TIntern = retVal;
+}
+void max31855Init()
+{
+TCouple = 0;
+TIntern = 0;
 }

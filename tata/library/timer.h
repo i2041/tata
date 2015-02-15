@@ -9,6 +9,9 @@
 #define TIMER_H_
 #include "commontypes.h"
 
+uint16 GlobalTimer;
+bool activeMode;
+bool comand_executed;
 /*	TAxCTL Register
 15 	14 	13 	12 	11 	10 	|	9 	8
 		Reserved 		|	TASSEL
@@ -38,5 +41,8 @@ TAIFG	=> Timer_A interrupt flag
 			1b = Interrupt pending
 */
 void init_timer(uint8 mode);
+void task500ms_impar();
+void task1s();
+void task500ms();
 
 #endif /* TIMER_H_ */

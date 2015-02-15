@@ -7,11 +7,13 @@
 
 #ifndef IO_H_
 #define IO_H_
+
 #include "timer.h"
 #include "commontypes.h"
+
 extern bool activeMode;
 extern bool comand_executed;
-extern uint8 risingTime;
+uint16 risingTime;
 extern uint16 GlobalTimer;
 extern bool risingFlag;
 

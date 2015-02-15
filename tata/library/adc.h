@@ -15,10 +15,12 @@
 
 #include "commontypes.h"
 
-extern uint32 Voltage;
-
-void start_adc(uint8 chanal);
-void init_adc();
+uint32 Voltage;
+uint16 RunTime;
+uint16 min_Temperature;
 uint16 read_adc(int pin);
+void start_adc();
+void init_adc();
+
 
 #endif /* ADC_H_ */

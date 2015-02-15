@@ -24,7 +24,13 @@ void init_timer(uint8 mode)
 		TA0CTL 		&= ~TAIE;							//Interrupt disabled
 		TA0CTL 		&= ~TAIFG;							//cleare ifg
 		TA0CCTL0 	&= ~CCIE;							//interupt enable
+		activeMode = false;
+		GlobalTimer=0;
+		//comand_executed = false;
+		//risingTime = 0;
+		//comand_executed = false;
 	}
+
 }
 // Timer A0 interrupt service routine
 // Interrupt handler for TA0CCR0 CCIFG.
@@ -33,6 +39,7 @@ __interrupt void Timer_A0 (void)
 {
 	static uint8 tmpTimer=0;
 	task500ms();
+	if (tmpTimer == 0) {task500ms_impar();}
 	tmpTimer++;
 	if (tmpTimer>1) {tmpTimer=0;task1s();}
 	TA0CCTL0 &= ~CCIFG;
@@ -58,4 +65,23 @@ __interrupt void Timer_A1 (void)
 	 }
 	}
 
+}
+void task500ms_impar()
+{
+	start_adc();
+    ThermoCoupleTemperature();
+    InternalTemperature();
+}
+
+void task500ms()
+{
+
+}
+void task1s()
+{
+	GlobalTimer++;
+
+	if (!comand_executed){verify_condition();}
+
+	if (activeMode){algortimul();}
 }

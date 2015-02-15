@@ -9,40 +9,81 @@
 #include <msp430i2041.h>
 void algortimul()
 {
-	static uint8 a=0;
-		if (a % 2 == 0)
+	static uint8 tmpTimer=0;
+	static float tmpTemperature=0;
+
+	if (mode == 0)
+	{
+		write_io(10,1);write_io(22,0);write_io(23,0);
+		tmpTimer = GlobalTimer;
+		mode++;
+	}
+	if (GlobalTimer <= RunTime)
+	{
+		if ((mode == 1) && ((GlobalTimer-tmpTimer) >= DELTA_TIME))
 		{
-			write_io(10,1);
-			write_io(22,1);
-			write_io(23,1);
+			write_io(10,1);write_io(22,1);write_io(23,1);
+			tmpTemperature = TCouple;
+			mode++;
 		}
-		else
+		if ((mode == 2) && ((TCouple - tmpTemperature) > DELTA_TEMPERATURE))
 		{
-			write_io(10,0);
-			write_io(22,0);
-			write_io(23,0);
+			write_io(10,1);write_io(22,0);write_io(23,1);
+			mode++;
 		}
-		a++;
+		if ((mode == 3) && (TCouple > MAX_TEMPERATURE))
+		{
+			write_io(10,1);write_io(22,0);write_io(23,0);
+			mode++;
+		}
+		if ((mode == 4) && ((uint16)TCouple < min_Temperature))
+		{
+			mode = 1;
+		}
+	}
+	else
+	{
+		write_io(10,1);write_io(22,0);write_io(23,0);
+		if ((uint16)TCouple < min_Temperature){go_to_sleep();}
+	}
+//	static uint8 a=0;
+//		if (a % 2 == 0)
+//		{
+//			write_io(10,1);
+//			write_io(22,1);
+//			write_io(23,1);
+//		}
+//		else
+//		{
+//			write_io(10,0);
+//			write_io(22,0);
+//			write_io(23,0);
+//		}
+//		a++;
 }
 void verify_condition()
 {
 	if ((risingFlag == true) && ((GlobalTimer - risingTime) > 10))
 	{
-		WDTCTL = 0;//provoke reset
 		comand_executed=true;
+		WDTCTL = 0;//provoke reset
 	}
 
-	if ((risingFlag == false) && ((GlobalTimer-risingTime) > 3))
+	if ((false == risingFlag)&&((GlobalTimer-risingTime)>3))
+	{
+		if (activeMode)
 		{
-			if (activeMode) {go_to_sleep();}
-			else
-			{
-				activeMode = true;
-				watchdog_config(stop);
-				init();
-			}
 			comand_executed=true;
+			go_to_sleep();
 		}
+		else
+		{
+			comand_executed=true;
+			activeMode = true;
+			watchdog_config(stop);
+			init();
+		}
+	}
 
 		if(!(activeMode) && ((GlobalTimer-risingTime) <= 3) && (risingFlag == false))
 		{
@@ -53,4 +94,9 @@ void verify_condition()
 		{
 			comand_executed=true;
 		}
+}
+void initProgramTata()
+{
+mode = 0;
+
 }
