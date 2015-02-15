@@ -11,7 +11,15 @@
 #define MAX_TEMPERATURE 150
 #define DELTA_TIME 10
 #define DELTA_TEMPERATURE 5
-
+#define aprindereTimeError 15	// 15seconds if count error more execute error
+#define activeButon	3			// 3 second
+#define preStart	10			// 10 second to clear room
+#define NrOfRetryers 1			//numbers of retryers 0,1; 2-times
+typedef enum typesOfError
+{
+   aprindere_error 	= 1,
+   benzine_error	= 2
+}typeError;
 #include "commontypes.h"
 extern bool activeMode;
 extern bool comand_executed;

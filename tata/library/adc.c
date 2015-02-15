@@ -59,7 +59,7 @@ void start_adc()
 	    case 6:                                   // SD24MEM1 IFG
 	    	//SD24CCTL1 &= ~SD24IFG;
 	    	min_Temperature =(read_adc(1));
-	    	min_Temperature = min_Temperature>>4; //32768 / 128 = maximum 256 grade Celsius
+	    	min_Temperature = min_Temperature>>7; //32768 / 128 = maximum 256 grade Celsius
 	    	//__enable_interrupt();
 	    	break;
 	    case 8:                                   // SD24MEM2 IFG
