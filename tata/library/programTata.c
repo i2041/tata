@@ -99,13 +99,13 @@ void algortimul()
 }
 void verify_condition()
 {
-	if ((risingFlag == true) && ((GlobalTimer - risingTime) > preStart))
+	if ((risingFlag == true) && ((GlobalTimer - risingTime) > activeButtonForReset))
 	{
 		comand_executed=true;
 		WDTCTL = 0;//provoke reset
 	}
 
-	if ((false == risingFlag)&&((GlobalTimer-risingTime)>activeButon))
+	if ((false == risingFlag)&&((GlobalTimer-risingTime) > activeButon))
 	{
 		if (activeMode)
 		{

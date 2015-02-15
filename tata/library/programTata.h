@@ -15,6 +15,7 @@
 #define activeButon	3			// 3 second
 #define preStart	10			// 10 second to clear room
 #define NrOfRetryers 1			//numbers of retryers 0,1; 2-times
+#define activeButtonForReset 10
 typedef enum typesOfError
 {
    aprindere_error 	= 1,
