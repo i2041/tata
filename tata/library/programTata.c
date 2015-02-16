@@ -13,6 +13,8 @@ void algortimul()
 	static float tmpTemperature=0;
 	static uint8 countError=0;
 	static uint8 retry = 0;//number of retry
+	static uint8 retry_mode3 = 0;//numbers retry for mode3
+
 	if (mode == 0)
 	{
 		write_io(10,1);write_io(22,0);write_io(23,0);
@@ -36,7 +38,9 @@ void algortimul()
 			{
 
 				write_io(10,1);write_io(22,0);write_io(23,1);
-				mode++;countError=0;
+				mode++;
+				countError=0;
+				retry=0;
 			}
 			else if (countError > aprindereTimeError)
 			{
@@ -45,9 +49,12 @@ void algortimul()
 					retry=0;
 					errorImplementaion(aprindere_error);
 				}
+				else
+				{
 				retry++;
 				mode=0;
-				tmpTimer = GlobalTimer;
+				//tmpTimer = GlobalTimer;
+				}
 			}
 		countError++;
 		}
@@ -57,18 +64,21 @@ void algortimul()
 			{
 				write_io(10,1);write_io(22,0);write_io(23,0);
 				mode++;
-				retry=0;
+				retry_mode3=0;
 				countError=0;
 			}
-			else if ((TCouple < tmpTemperature) && (countError > aprindereTimeError))
+			else if ((TCouple <= (tmpTemperature+1)) && (countError > aprindereTimeError))
 			{
-				if (retry == NrOfRetryers)
+				if (retry_mode3 == NrOfRetryers)
 				{
-					retry = 0;
+					retry_mode3 = 0;
 					errorImplementaion(benzine_error);
 				}
-				retry++;
-				mode=1;
+				else
+				{
+					retry_mode3++;
+					mode=1;
+				}
 			}
 			countError++;
 		}
