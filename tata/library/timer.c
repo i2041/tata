@@ -84,10 +84,13 @@ void task1s()
 
 	if (!comand_executed){verify_condition();}
 
-	if (activeMode && (TCouple == couple_error))
+	if (TCouple != couple_error)
 	{
 		countError=0;
-		algortimul();
+		if (activeMode)
+		{
+			algortimul();
+		}
 	}
 	else
 	{

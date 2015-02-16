@@ -7,7 +7,7 @@
 
 #ifndef TIMER_H_
 #define TIMER_H_
-#define NR_ERRORS 15
+#define NR_ERRORS 5
 #include "commontypes.h"
 
 uint16 GlobalTimer;
