@@ -10,7 +10,7 @@
 
 void ThermoCoupleTemperature()
 {
-	float retVal = 3000;
+	float retVal = couple_error;
 	uint16 Tcouple_temperature;
 	Tcouple_temperature = spi_read(0);//read from max 31..24 bites
 	Tcouple_temperature = Tcouple_temperature<<8;

@@ -10,10 +10,8 @@
 
 #include "commontypes.h"
 
-#define SCV_ERROR 	3333
-#define SCG_ERROR 	3222
-#define OC_ERROR	3111
-#define VERIFY_FAULT_COUPLE 1
+#define VERIFY_FAULT_COUPLE 0
+
 void ThermoCoupleTemperature();
 void InternalTemperature();
 float TCouple;

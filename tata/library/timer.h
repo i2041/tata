@@ -7,11 +7,13 @@
 
 #ifndef TIMER_H_
 #define TIMER_H_
+#define NR_ERRORS 15
 #include "commontypes.h"
 
 uint16 GlobalTimer;
 bool activeMode;
 bool comand_executed;
+extern float TCouple;
 /*	TAxCTL Register
 15 	14 	13 	12 	11 	10 	|	9 	8
 		Reserved 		|	TASSEL

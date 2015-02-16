@@ -16,11 +16,6 @@
 #define preStart	10			// 10 second to clear room
 #define NrOfRetryers 1			//numbers of retryers 0,1; 2-times
 #define activeButtonForReset 10
-typedef enum typesOfError
-{
-   aprindere_error 	= 1,
-   benzine_error	= 2
-}typeError;
 #include "commontypes.h"
 extern bool activeMode;
 extern bool comand_executed;

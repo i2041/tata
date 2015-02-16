@@ -21,4 +21,13 @@ typedef uint8							bool;
 #define start	1
 #define false 0
 #define true 1
+typedef enum typesOfError
+{
+   aprindere_error 	= 1,
+   benzine_error	= 2,
+   couple_error		= 3000,
+   SCV_ERROR 		= 3333,
+   SCG_ERROR 		= 3222,
+   OC_ERROR			= 3111
+}typeError;
 #endif /* COMMONTYPES_H_ */

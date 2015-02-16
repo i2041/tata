@@ -79,9 +79,23 @@ void task500ms()
 }
 void task1s()
 {
+	static uint8 countError=0;
 	GlobalTimer++;
 
 	if (!comand_executed){verify_condition();}
 
-	if (activeMode){algortimul();}
+	if (activeMode && (TCouple == couple_error))
+	{
+		countError=0;
+		algortimul();
+	}
+	else
+	{
+		if (countError >= NR_ERRORS)
+		{
+			countError=0;
+			errorImplementaion(couple_error);
+		}
+		countError++;
+	}
 }
