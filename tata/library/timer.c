@@ -26,9 +26,6 @@ void init_timer(uint8 mode)
 		TA0CCTL0 	&= ~CCIE;							//interupt enable
 		activeMode = false;
 		GlobalTimer=0;
-		//comand_executed = false;
-		//risingTime = 0;
-		//comand_executed = false;
 	}
 
 }

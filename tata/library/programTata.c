@@ -109,13 +109,13 @@ void algortimul()
 }
 void verify_condition()
 {
-	if ((risingFlag == true) && ((GlobalTimer - risingTime) > activeButtonForReset))
+	if ((fallingFlag == true) && ((GlobalTimer - fallingTime) > activeButtonForReset))
 	{
 		comand_executed=true;
 		WDTCTL = 0;//provoke reset
 	}
 
-	if ((false == risingFlag)&&((GlobalTimer-risingTime) > activeButon))
+	if ((false == fallingFlag)&&((GlobalTimer - fallingTime) > activeButon))
 	{
 		if (activeMode)
 		{
@@ -131,12 +131,12 @@ void verify_condition()
 		}
 	}
 
-		if(!(activeMode) && ((GlobalTimer-risingTime) <= activeButon) && (risingFlag == false))
+		if(!(activeMode) && ((GlobalTimer-fallingTime) <= activeButon) && (fallingFlag == false))
 		{
 			comand_executed=true;
 			go_to_sleep();
 		}
-		if((activeMode) && ((GlobalTimer-risingTime) <= activeButon) && (risingFlag == false))
+		if((activeMode) && ((GlobalTimer-fallingTime) <= activeButon) && (fallingFlag == false))
 		{
 			comand_executed=true;
 		}

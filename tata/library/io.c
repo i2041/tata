@@ -48,15 +48,15 @@ __interrupt void Port_2(void)
 
 				if(P2IN &= BIT1)
 				{
-					risingTime = GlobalTimer;
-					risingFlag = true;
-					//activeMode = false;
-					comand_executed = false;
-					init();
+					fallingFlag = false;
 				}
 				else
 				{
-					risingFlag = false;
+
+					fallingTime = GlobalTimer;
+					fallingFlag = true;
+					comand_executed = false;
+					init();
 				}
 
 				P2IES ^= BIT1; // Toggle Edge sensitivity

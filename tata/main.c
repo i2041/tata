@@ -32,7 +32,7 @@ void init()
 void go_to_sleep()
 {
 	P2DIR &= ~BIT1; // Set P2.1 to input direction
-	P2IES &= ~BIT1;	//on raising
+	P2IES |= BIT1;	//on falling
 	P2IE |= BIT1; // enable P2.1 interrupt
 	P2IFG &= ~BIT1;	// Clear Interrupt Flag
 

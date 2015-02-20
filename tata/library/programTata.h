@@ -25,7 +25,7 @@ extern uint16 RunTime;
 extern uint16 min_Temperature;
 void algortimul();
 void initProgramTata();
-bool risingFlag;
+bool fallingFlag;
 uint8 mode;
-extern uint16 risingTime;
+extern uint16 fallingTime;
 #endif /* PROGRAMTATA_H_ */
