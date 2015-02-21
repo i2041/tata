@@ -26,6 +26,7 @@ typedef enum typesOfError
    aprindere_error 	= 1,
    benzine_error	= 2,
    couple_error		= 3000,
+   voltage_error	= 3,
    SCV_ERROR 		= 3333,
    SCG_ERROR 		= 3222,
    OC_ERROR			= 3111

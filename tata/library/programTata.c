@@ -152,6 +152,7 @@ void errorImplementaion(typeError Error)
 	case aprindere_error: 	{go_to_sleep();break;}
 	case benzine_error	: 	{go_to_sleep();break;}
 	case couple_error	: 	{go_to_sleep();break;}
+	case voltage_error	: 	{go_to_sleep();break;}
 	default:				{go_to_sleep();break;}
 	}
 }

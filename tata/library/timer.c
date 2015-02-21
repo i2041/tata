@@ -76,26 +76,47 @@ void task500ms()
 }
 void task1s()
 {
-	static uint8 countError=0;
+	static uint8 count_Couple_Error=0;
+	static uint8 count_Voltage_Error=0;
 	GlobalTimer++;
 
 	if (!comand_executed){verify_condition();}
 
 	if (TCouple != couple_error)
 	{
-		countError=0;
-		if (activeMode)
+		count_Couple_Error=0;
+		if ((Voltage >= minVoltage))
 		{
-			algortimul();
+			count_Voltage_Error=0;
+			if (activeMode)
+			{
+				algortimul();
+			}
+		}
+		else
+		{
+			if (count_Voltage_Error >= NR_ERRORS)
+			{
+				count_Voltage_Error=0;
+				errorImplementaion(voltage_error);
+			}
+			count_Voltage_Error++;
 		}
 	}
 	else
 	{
-		if (countError >= NR_ERRORS)
+		if (count_Couple_Error >= NR_ERRORS)
 		{
-			countError=0;
+			count_Couple_Error=0;
 			errorImplementaion(couple_error);
 		}
-		countError++;
+		count_Couple_Error++;
+
+		if (count_Voltage_Error >= NR_ERRORS)
+		{
+			count_Voltage_Error=0;
+			errorImplementaion(voltage_error);
+		}
+		if (Voltage < minVoltage) count_Voltage_Error++;
 	}
 }
