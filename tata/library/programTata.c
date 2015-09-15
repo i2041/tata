@@ -15,7 +15,7 @@ void algortimul()
 	static uint8 retry = 0;//number of retry
 	static uint8 retry_mode3 = 0;//numbers retry for mode3
 
-	if (mode == 0)
+	if (mode == 0)														//aereseste camera de ardere if < DELTA_TIME
 	{
 		write_io(10,1);write_io(22,0);write_io(23,0);
 		tmpTimer = GlobalTimer;
@@ -84,7 +84,9 @@ void algortimul()
 		}
 		if ((mode == 4) && ((uint16)TCouple < min_Temperature))
 		{
-			mode = 1;
+			mode = 2;
+			tmpTemperature = TCouple;
+			write_io(10,1);write_io(22,1);write_io(23,1);
 		}
 	}
 	else

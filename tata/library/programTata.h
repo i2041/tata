@@ -13,9 +13,9 @@
 #define DELTA_TEMPERATURE 5
 #define aprindereTimeError 15	// 15seconds if count error more execute error
 #define activeButon	3			// 3 second
-#define preStart	10			// 10 second to clear room
+#define preStart	10			// 10 second to clear fire room of gasoline
 #define NrOfRetryers 1			//numbers of retryers 0,1; 2-times
-#define activeButtonForReset 10
+#define activeButtonForReset 7
 #include "commontypes.h"
 extern bool activeMode;
 extern bool comand_executed;
