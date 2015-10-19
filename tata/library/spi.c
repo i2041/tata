@@ -6,7 +6,7 @@
  */
 #include <msp430i2041.h>
 #include "commontypes.h"
-
+#include "spi.h"
 void init_spi()
 {
 UCA0CTLW0 |= UCSWRST;

@@ -16,8 +16,8 @@
 #include "commontypes.h"
 
 uint32 Voltage;
-uint16 RunTime;
 uint16 min_Temperature;
+uint16 max_Temperature;
 uint16 read_adc(int pin);
 void start_adc();
 void init_adc();

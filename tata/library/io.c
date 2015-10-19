@@ -6,6 +6,7 @@
  */
 #include <msp430i2041.h>
 #include "io.h"
+#include "spi.h"
 void init_io()
 {
 	P1DIR|= 0x01;	//For P1.0 	0000 0001
@@ -46,11 +47,11 @@ __interrupt void Port_2(void)
 	{
 	case 4: 	_BIC_SR(LPM4_EXIT); // wake up from low power mode
 
-				if(P2IN &= BIT1)
+				if(P2IN &= BIT1)							//de verificat if daca e ok. Poate trebuie de inversat conditiile de if si else.!!!!!!!!!!!!!
 				{
 					fallingFlag = false;
 				}
-				else
+				else										//de verificat if daca e ok. Poate trebuie de inversat conditiile de if si else.!!!!!!!!!!!!!
 				{
 
 					fallingTime = GlobalTimer;

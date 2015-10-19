@@ -5,10 +5,10 @@
 #include "library/watchdog.h"
 #include "library/programTata.h"
 #include "library/commontypes.h"
+#include "library/spi.h"
 /*
  * main.c
  */
-
 void main(void) {
 	watchdog_config(stop);
 	go_to_sleep();
@@ -25,7 +25,8 @@ void init()
 	__enable_interrupt();
 	init_adc();
 	start_adc();
-	while ((TCouple==0) || (TIntern==0) || (Voltage==0) || (RunTime==0) ){}	//white interrupt flag ADC to go next
+	while ((TCouple==0) || (TIntern==0) || (Voltage==0)  ){}	//white interrupt flag ADC to go next
+																//asteptam pina ce nu optinem valori valide pentru a putea merge mai departe
 	//verify if voltage <8V go to sleep again
 	init_timer(start);
 }
@@ -46,16 +47,3 @@ void go_to_sleep()
 	initProgramTata();
 	_bis_SR_register(GIE+CPUOFF+OSCOFF+SCG1);
 }
-void wakeUp()
-{
-	//_bic_SR_register(GIE+CPUOFF+OSCOFF+SCG1);
-}
-//#pragma vector=WDT_VECTOR
-//__interrupt void wdttimer(void)
-//{
-//	IFG1&=~WDTIFG;
-//}
-//void config_wakeup()
-//{
-//
-//}

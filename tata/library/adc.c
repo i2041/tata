@@ -24,7 +24,8 @@ void init_adc()
 	SD24CTL   |= SD24REFS;	//INTERNAL REFERINCE
 
 	Voltage = 0;
-	RunTime = 0;
+	min_Temperature=0;
+	max_Temperature=0;
 }
 uint16 read_adc(int pin)
 {
@@ -33,7 +34,7 @@ uint16 read_adc(int pin)
 		case 0:{return SD24MEM0;}
 		case 1:{return SD24MEM1;}	//for MinTemperature
 		case 2:{return SD24MEM2;}
-		case 3:{return SD24MEM3;}
+		case 3:{return SD24MEM3;}	//for MaxTemperature
 		default:{return 0;}
 	}
 }
@@ -49,29 +50,30 @@ void start_adc()
 {
 	  switch (SD24IV)
 	    {
-	    case 2:                                   // SD24MEM Overflow
+	    case 2:                                   				// SD24MEM Overflow
 	    	break;
-	    case 4:                                   // SD24MEM0 IFG
+	    case 4:                                   				// SD24MEM0 IFG
 	    	SD24CCTL0 &= ~SD24IFG;
 
 	    	//__enable_interrupt();
 	        break;
-	    case 6:                                   // SD24MEM1 IFG
+	    case 6:                                   				// SD24MEM1 IFG
 	    	//SD24CCTL1 &= ~SD24IFG;
 	    	min_Temperature =(read_adc(1));
-	    	min_Temperature = min_Temperature>>7; //32768 / 128 = maximum 256 grade Celsius
+	    	min_Temperature = min_Temperature>>7; 				//32768 / 128 = maximum 256 grade Celsius
+
 	    	//__enable_interrupt();
 	    	break;
-	    case 8:                                   // SD24MEM2 IFG
+	    case 8:                                   				// SD24MEM2 IFG
 	    	//SD24CCTL2 &= ~SD24IFG;
 	    	Voltage = read_adc(2);	//read RAW ADC
 	    	Voltage = (Voltage * Vref_ADC)/100000;				//calculate Vout
-	    	Voltage = (Voltage*1879)/100;	//calculate Vin in mV, 18.36 = (R1+R2))/(R2)
+	    	Voltage = (Voltage*1879)/100;						//calculate Vin in mV, 18.36 = (R1+R2))/(R2)
 	    	//__enable_interrupt();
 			break;
 	    case 10:
-	    	//SD24CCTL3 &= ~SD24IFG; 				  // SD24MEM3 IFG
-	    	RunTime = read_adc(3);
+	    	//SD24CCTL3 &= ~SD24IFG; 				 			 // SD24MEM3 IFG
+	    	max_Temperature = read_adc(3);
 	    	break;
 	    }
 }

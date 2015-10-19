@@ -7,15 +7,15 @@
 
 #ifndef TIMER_H_
 #define TIMER_H_
-#define NR_ERRORS 5
+#define NR_ERRORS 6
 #define minVoltage 10000
 #include "commontypes.h"
-
+#include "adc.h"
+#include "max31855.h"
+#include "programTata.h"
 uint16 GlobalTimer;
 bool activeMode;
 bool comand_executed;
-extern float TCouple;
-extern uint32 Voltage;
 /*	TAxCTL Register
 15 	14 	13 	12 	11 	10 	|	9 	8
 		Reserved 		|	TASSEL

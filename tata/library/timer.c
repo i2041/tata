@@ -6,6 +6,7 @@
  */
 #include <msp430i2041.h>
 #include "timer.h"
+#include "programTata.h"
 void init_timer(uint8 mode)
 {
 	if (mode == start)
@@ -74,14 +75,17 @@ void task500ms()
 {
 
 }
+
 void task1s()
 {
 	static uint8 count_Couple_Error=0;
 	static uint8 count_Voltage_Error=0;
 	GlobalTimer++;
 
-	if (!comand_executed){verify_condition();}
-
+	if (!comand_executed)
+	{
+		verify_condition();
+	}
 	if (TCouple != couple_error)
 	{
 		count_Couple_Error=0;
@@ -95,12 +99,12 @@ void task1s()
 		}
 		else
 		{
+			count_Voltage_Error++;
 			if (count_Voltage_Error >= NR_ERRORS)
 			{
 				count_Voltage_Error=0;
 				errorImplementaion(voltage_error);
 			}
-			count_Voltage_Error++;
 		}
 	}
 	else

@@ -10,12 +10,9 @@
 
 #include "timer.h"
 #include "commontypes.h"
+#include "programTata.h"
 
-extern bool activeMode;
-extern bool comand_executed;
 uint16 fallingTime;
-extern uint16 GlobalTimer;
-extern bool fallingFlag;
 
 void init_io();
 void write_io(int pin,int state);
