@@ -11,123 +11,154 @@
 void algortimul()
 {
 	static uint8 tmpTimer=0;
-	static float tmpTemperature=0;
-	static uint8 countError=0;
-	static uint8 retry = 0;//number of retry
-	static uint8 retry_mode3 = 0;//numbers retry for mode3
-
-	if (mode == 0)														//aerisirea camerii de ardere
-	{
-		write_io(10,1);write_io(22,0);write_io(23,0);					//aprindem ventilatorul
-		tmpTimer = GlobalTimer;
-		mode++;
-		//retry = 0;
-	}
+	static uint8 tmpTemperature=0;
+	static uint8 retryAprindere=0;
 	if (GlobalTimer <= RunTime)
 	{
-		if ((mode == 1) && ((GlobalTimer-tmpTimer) >= DELTA_TIME))		//aprinderea tuturor elementelor pentru a se aprinde cuptorul
+		if (mode == 0) 														//aerisirea camerii
 		{
-			write_io(10,1);write_io(22,1);write_io(23,1);				//se aprind toate numai dupa ce sa aerisit camera
-			tmpTemperature = TCouple;
-			mode++;
-			//retry = 0;
-			countError = 0;
-		}
-		if (mode == 2)													//aprindem numai benzina si turbina pentru a mentine focul aprins
-		{
-			if ((TCouple - tmpTemperature) > DELTA_TEMPERATURE)
+			if (onlyOnce == true)
 			{
-
-				write_io(10,1);write_io(22,0);write_io(23,1);			//se lasa aprins toate elememtele si se stinge bugia numai si
-				mode++;													//	numai dupa ce sa ridicat temperatura cu 5 grade ceia ce inseamna ca cuptorul sa aprins
-				countError=0;
-				retry=0;
+			write_io(10,1);write_io(22,0);write_io(23,0);
+			onlyOnce = false;
+			tmpTimer = GlobalTimer;
 			}
-			else if (countError > aprindereTimeError)					//daca cuptorul nu sa aprins timp de "aprindereTimeError" intra in eroare
-			{															// se incearca de NrOfRetryers ori pina se valideaza eroarea.
-				if (retry == NrOfRetryers)
+			if  ((GlobalTimer-tmpTimer) >= DELTA_TIME)						//aerisirea camerii < DELTA_TIME
+			{
+				mode++;
+				onlyOnce = true;
+			}
+		}
+		if (mode == 1)														//aprinderea tuturor elementeleor
+		{
+			if (onlyOnce == true)
+			{
+				write_io(10,1);write_io(22,1);write_io(23,1);
+				tmpTemperature = (uint8)TCouple;
+				tmpTimer = GlobalTimer;
+				//if (retryAprindere == 0)retryAprindere = 0;
+				onlyOnce = false;
+			}
+			if ( ((uint8)TCouple >= tmpTemperature) && ((uint8)TCouple - tmpTemperature) > DELTA_TEMPERATURE )				//aprinderea tuturor elementelor < ((TCouple - tmpTemperature) > DELTA_TEMPERATURE)
+			{
+				mode++;
+				//tmpTimer = GlobalTimer;
+				onlyOnce = true;
+				retryAprindere = 0;
+			}
+			else if ((GlobalTimer - tmpTimer) > aprindereTimeError)			//daca DELTA_TEMPERATURE nu a fost timp de aprindereTimeError setam eroarea
+			{
+				retryAprindere++;
+				tmpTimer = GlobalTimer;
+				if (retryAprindere == 2)										// a 2 incercare daca avem eroare atunci se seteaza DTC
 				{
-					retry=0;
+					retryAprindere = 0;
 					errorImplementaion(aprindere_error);
 				}
 				else
 				{
-				retry++;
-				mode=0;
-				//tmpTimer = GlobalTimer;
+					//mode = 0;												// se poate de trecut prin modul 0 de la inceput
 				}
 			}
-		countError++;
 		}
-		if ((mode == 3) )												//aprins sta numai ventilatorul
+		if ((mode == 2) )
 		{
+			if (onlyOnce == true)
+			{
+				write_io(10,1);write_io(22,0);write_io(23,1);
+				onlyOnce = false;
+			}
 			if (TCouple > max_Temperature)
 			{
-				write_io(10,1);write_io(22,0);write_io(23,0);			// daca o ajuns la temperatura MAX_TEMPERATURE se lasa numai turbina pentru a se raci
 				mode++;
-				retry_mode3=0;
-				countError=0;
+				tmpTemperature = (uint8)TCouple;
+				onlyOnce = true;
 			}
-			else if ((TCouple <= (tmpTemperature+1)) && (countError > aprindereTimeError))
+			else
 			{
-				if (retry_mode3 == NrOfRetryers)
+				if ((uint8)TCouple > tmpTemperature ) tmpTemperature = TCouple;
+				else if ( (tmpTemperature - (uint8)TCouple) > deltaTemperatureMode2 )
 				{
-					retry_mode3 = 0;
 					errorImplementaion(benzine_error);
 				}
-				else
-				{
-					retry_mode3++;
-					mode=1;
-				}
 			}
-			countError++;
 		}
-		if ((mode == 4) && ((uint16)TCouple < min_Temperature))			//se reaprind iarasi toate elemente cind ajunge la temperatura "min_Temperature"
+		if ((mode == 3) )
 		{
-			mode = 2;
-			tmpTemperature = TCouple;
-			write_io(10,1);write_io(22,1);write_io(23,1);				//cind sa ajuns la "min_Temperature" aprindem toate elementele
+			if (onlyOnce == true)
+			{
+				write_io(10,1);write_io(22,0);write_io(23,0);
+				onlyOnce = false;
+			}
+			if ((uint16)TCouple < min_Temperature)
+			{
+				mode = 1;
+				onlyOnce = true;
+			}
+		}
+		if ( mode == 5 )												//racirea camerii de ardere
+		{
+			if (onlyOnce == true)
+			{
+				write_io(10,1);write_io(22,0);write_io(23,0);
+				tmpTimer = GlobalTimer;
+				onlyOnce = false;
+			}
+			if 	(
+					( ((uint16)TCouple < TemperaturaMinRacire) && ((GlobalTimer - tmpTimer) > 30) 			)		// in cazul cind a fost aprinsa si sa dorit brusc oprirea lui
+					||
+					( ((uint16)TCouple > TemperaturaMinRacire) && ((GlobalTimer - tmpTimer) > TimpulRacire) )		// in cazul cind a avut o temperatura mare si sa e nevoie de racire
+				)
+			{
+				go_to_sleep();
+			}
 		}
 	}
 	else
 	{
-		write_io(10,1);write_io(22,0);write_io(23,0);
-		if ((uint16)TCouple < min_Temperature){go_to_sleep();}
+		static bool onlyOnce2 = true;
+		if (onlyOnce2 == true)
+		{
+			write_io(10,1);write_io(22,0);write_io(23,0);
+			tmpTimer = GlobalTimer;
+			onlyOnce2 = false;
+		}
+		if 	(
+				( ((uint16)TCouple < TemperaturaMinRacire) && ((GlobalTimer - tmpTimer) > 30) 			)		// in cazul cind a fost aprinsa si sa dorit brusc oprirea lui
+				||
+				( ((uint16)TCouple > TemperaturaMinRacire) && ((GlobalTimer - tmpTimer) > TimpulRacire) )		// in cazul cind a avut o temperatura mare si sa e nevoie de racire
+			)
+		{
+			go_to_sleep();
+		}
 	}
-//	static uint8 a=0;
-//		if (a % 2 == 0)
-//		{
-//			write_io(10,1);
-//			write_io(22,1);
-//			write_io(23,1);
-//		}
-//		else
-//		{
-//			write_io(10,0);
-//			write_io(22,0);
-//			write_io(23,0);
-//		}
-//		a++;
 }
 void verify_condition()
 {
-	if ((fallingFlag == true ) && ((GlobalTimer - fallingTime) > activeButtonForReset))
+	if ((fallingFlag == true ) && ((GlobalTimer - fallingTime) > activeButtonForReset))				//tinem apasat mult timp
 	{
-		comand_executed=true;
+		comand_executed = true;
 		WDTCTL = 0;//provoke reset
 	}
-
 	if ((fallingFlag == false) && ((GlobalTimer - fallingTime) > activeButon))
 	{
-		if (activeMode)				// go in sleep mode
+		if ( activeMode )				// In normal Mode preparing for cooling room
 		{
-			comand_executed=true;
-			go_to_sleep();
+			if ( mode == 5 )
+			{
+				//comand_executed = true;	// nu cred ca e nevoie caci se duce in sleep mode
+				go_to_sleep();
+			}
+			else						// Now I am in cooling mode, resulting I need to go in sleep mode imediatly.
+			{
+				comand_executed = true;
+				onlyOnce = true;
+				mode = 5;
+			}
 		}
-		else						//go in run mode
+		else							//go in run mode
 		{
-			comand_executed=true;
+			comand_executed = true;
 			activeMode = true;
 			watchdog_config(stop);
 			init();
@@ -146,13 +177,14 @@ void verify_condition()
 void initProgramTata()
 {
 mode = 0;
+onlyOnce = true;
 }
 void errorImplementaion(typeError Error)
 {
 	switch (Error)
 	{
 	case aprindere_error: 	{go_to_sleep();break;}
-	case benzine_error	: 	{go_to_sleep();break;}
+	case benzine_error	: 	{go_to_sleep();break;}			// SE POATE DE SETAT SI PE MODUL 5 CARE MAI APOI SA SE DUCA LA SLEEP
 	case couple_error	: 	{go_to_sleep();break;}
 	case voltage_error	: 	{go_to_sleep();break;}
 	default:				{go_to_sleep();break;}

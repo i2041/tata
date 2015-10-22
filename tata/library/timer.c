@@ -18,6 +18,7 @@ void init_timer(uint8 mode)
 		TA0CTL = TASSEL_2 + ID_3 + TAIE + MC_1;  	//SMCLK,UPMODE,InteruptEnebled
 		TA0CCR0 = 0xACEA;							//500ms
 		TA0CCTL0|= CCIE;							//interupt enable
+		GlobalTimer=0;
 	}
 	if (mode == stop)
 	{

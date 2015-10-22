@@ -39,9 +39,7 @@ void go_to_sleep()
 
 	//init_io();
 
-	write_io(10,0);
-	write_io(22,0);
-	write_io(23,0);
+	write_io(10,0);	write_io(22,0);	write_io(23,0);
 
 	init_timer(stop);
 	initProgramTata();
