@@ -74,6 +74,7 @@ void start_adc()
 	    case 10:
 	    	//SD24CCTL3 &= ~SD24IFG; 				 			 // SD24MEM3 IFG
 	    	max_Temperature = read_adc(3);
+	    	max_Temperature = max_Temperature>>7;
 	    	break;
 	    }
 }

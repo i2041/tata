@@ -17,8 +17,8 @@ void init_timer(uint8 mode)
 		CSCTL1 |= (0x40);							//Divide by 1 SMCLK
 		TA0CTL = TASSEL_2 + ID_3 + TAIE + MC_1;  	//SMCLK,UPMODE,InteruptEnebled
 		TA0CCR0 = 0xACEA;							//500ms
-		TA0CCTL0|= CCIE;							//interupt enable
-		GlobalTimer=0;
+		TA0CCTL0 |= CCIE;							//interupt enable
+		GlobalTimer = 0;
 	}
 	if (mode == stop)
 	{
@@ -27,7 +27,7 @@ void init_timer(uint8 mode)
 		TA0CTL 		&= ~TAIFG;							//cleare ifg
 		TA0CCTL0 	&= ~CCIE;							//interupt enable
 		activeMode = false;
-		GlobalTimer=0;
+		GlobalTimer = 0;
 	}
 
 }

@@ -57,7 +57,7 @@ __interrupt void Port_2(void)
 					fallingTime = GlobalTimer;
 					fallingFlag = true;
 					comand_executed = false;
-					init();
+					if (!activeMode) init();
 				}
 
 				P2IES ^= BIT1; // Toggle Edge sensitivity
