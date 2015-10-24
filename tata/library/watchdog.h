@@ -11,6 +11,7 @@
 #define start 1
 #include <msp430i2041.h>
 #include "commontypes.h"
+#include "programTata.h"
 /*
 15 		14 		13 		12 		11 		10 		9 		8
 						WDTPW
