@@ -42,7 +42,7 @@ __interrupt void watchdog_timer(void)
 	static uint8 WDreset = 0;
 	if (fallingFlag) WDreset++;
 	else WDreset = 0;
-	if (WDreset == 30)
+	if (WDreset == 30)	//30*0.262ms= 7.86s
 	{
 		WDreset = 0;
 		WDTCTL = 0;//provoke reset
