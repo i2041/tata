@@ -9,7 +9,7 @@
 uint16 ADS1115_ConversionRegister(void)
 {
 	uint16 returnValue;
-	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	//UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
 	TxBuffer[0] = Conversion_Register;
 	length = 1;
 	Start_I2C_Transmition();
@@ -29,7 +29,42 @@ void ADS1115_Write_ConfigRegister()
 	TxBuffer[0] = Config_Register;
 	TxBuffer[1] = ((NoEfect | AIN0P_AIN1N 						| V6_144 	| ContinuousConversion)>>8 );
 	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
-
+	length = 3;
+	Start_I2C_Transmition();
+}
+void ADS1115_Write_ConfigRegister_AIN0P_GND()
+{
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	TxBuffer[1] = ((NoEfect | AIN0P_GND 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
+	length = 3;
+	Start_I2C_Transmition();
+}
+void ADS1115_Write_ConfigRegister_AIN1P_GND()
+{
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	TxBuffer[1] = ((NoEfect | AIN1P_GND 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
+	length = 3;
+	Start_I2C_Transmition();
+}
+void ADS1115_Write_ConfigRegister_AIN2P_GND()
+{
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	TxBuffer[1] = ((NoEfect | AIN2P_GND 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
+	length = 3;
+	Start_I2C_Transmition();
+}
+void ADS1115_Write_ConfigRegister_AIN3P_GND()
+{
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	TxBuffer[1] = ((NoEfect | AIN3P_GND 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
 	length = 3;
 	Start_I2C_Transmition();
 }
