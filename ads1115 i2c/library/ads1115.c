@@ -5,35 +5,53 @@
  *      Author: uidg6243
  */
 #include "ads1115.h"
-#include <msp430.h>
-#include "i2c.h"
-void TransmitADC1115()
+
+uint16 ADS1115_ConversionRegister(void)
 {
-	while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
-	UCB0CTL1 |= UCTR + UCTXSTT;             // I2C TX, start condition
+	uint16 returnValue;
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Conversion_Register;
+	length = 1;
+	Start_I2C_Transmition();
+
+	length = 2;
+	Start_I2C_Reception();
+
+	returnValue =  RxBuffer[0];
+	returnValue =  returnValue<<8;
+	returnValue += RxBuffer[1];
+	return returnValue;
 }
-void ReceiveADC1115(void)
+
+void ADS1115_Write_ConfigRegister()
 {
-	while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
-	UCB0CTL1 &= ~UCTR ;                     // Clear UCTR
-	UCB0CTL1 |= UCTXSTT;                    // I2C start condition
-	while (UCB0CTL1 & UCTXSTT);             // Start condition sent?
-	__bis_SR_register(CPUOFF + GIE);        // Enter LPM0 w/ interrupts
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	TxBuffer[1] = ((NoEfect | AIN0P_AIN1N 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
+
+	length = 3;
+	Start_I2C_Transmition();
 }
-void configADS1115()
+uint16 ADS1115_Read_ConfigRegister()
 {
-	_DINT();
-//	void init_I2C(void) {
-//	  _DINT();
-//	  while (UCB0CTL1 & UCTXSTP);               		// Ensure stop condition got sent
-//	  UCB0CTL1 |= UCSWRST;                      		// Enable SW reset
-//	  UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;     // I2C Master, synchronous mode, MSB first
-//	  UCB0CTL1 = UCSSEL_2 + UCSWRST;            		// Use SMCLK, keep SW reset
-//	  UCB0BR0 = 0x50;                             		// fSCL = SMCLK/0xFF = ???
-//	  UCB0BR1 = 0;
-//	  UCB0I2CSA = 0x49;                         		// Slave Address is 069h
-//	  UCB0CTL1 &= ~UCSWRST;                     		// Clear SW reset, resume operation
-//	  IE2 |= UCB0RXIE;             						//Enable RX interrupt
-//	  IE2 |= UCB0TXIE;                         			// Enable TX interrupt
-//	}
+	uint16 returnValue;
+	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
+	TxBuffer[0] = Config_Register;
+	length = 1;
+	Start_I2C_Transmition();
+
+	length = 2;
+	Start_I2C_Reception();
+	returnValue =  RxBuffer[0];
+	returnValue =  returnValue<<8;
+	returnValue += RxBuffer[1];
+	return returnValue;
 }
+//uint16 ADS1115_Read_ConfigRegister()
+//{
+//	uint16 returnValue;
+//	TxBuffer[0] = Conversion_Register;
+//	length = 1;
+//	//Start_I2C_Reception();
+//}

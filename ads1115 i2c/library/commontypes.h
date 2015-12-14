@@ -17,5 +17,6 @@ typedef long                   			int32;	//-2147483648 - 2147483647
 typedef unsigned long long int         	uint64;
 typedef long long int         			int64;	//-9223372036854775808 - 9223372036854775807
 typedef uint8							bool;
-
+#define false 0
+#define true 1
 #endif /* COMMONTYPES_H_ */

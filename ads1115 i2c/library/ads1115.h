@@ -7,6 +7,10 @@
 
 #ifndef ADS1115_H_
 #define ADS1115_H_
+#include "commontypes.h"
+#include <msp430.h>
+#include "i2c.h"
+#define ADS1115_ADRESS 0x49
 /*
 =========================================================OS: Operational status/single-shot conversion start
 This bit determines the operational status of the device.
@@ -22,7 +26,7 @@ typedef enum
 {
 	NoEfect					=0x0000,
 	BeginSingleConversion	=0x8000
-}OpStatus;
+}OS;
 /*
 =========================================================MUX[2:0]: Input multiplexer configuration (ADS1115 only)
 These bits configure the input multiplexer. They serve no function on the ADS1113/4.
@@ -150,6 +154,17 @@ typedef enum
 	AsertAfter_3_Conversion	=0x0002,
 	DisableComparator		=0x0003
 }COMP_QUE;
+/*
+
+ */
+typedef enum
+{
+	Conversion_Register	=0x00,
+	Config_Register		=0x01,
+	Lo_Tresh_Register	=0x02,
+	Hi_Tresh_Register	=0x03
+}POINTER_REGISTER;
+
 
 //typedef struct
 //{
@@ -162,8 +177,10 @@ typedef enum
 //	COMP_POL	;
 //	COMP_LAT	;
 //	COMP_QUE	;
-//}ConfigRegister;
-void configADS1115();
-void Transmit();
-void Receive();
+//}ConfigRegister;;
+uint16 	ADS1115_ConversionRegister();
+void 	ADS1115_Write_ConfigRegister();
+uint16 	ADS1115_Read_ConfigRegister();
+void 	ADS1115_LO_TreshRegister();
+void 	ADS1115_HI_TreshRegister();
 #endif /* ADS1115_H_ */
