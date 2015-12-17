@@ -19,4 +19,6 @@ void Init_I2C();
 void Start_I2C_Transmition();
 void Start_I2C_Reception();
 void Stop_I2C();
+void I2C_TX_Interrupt();
+void I2C_RX_Interrupt();
 #endif /* I2C_H_ */

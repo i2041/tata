@@ -19,8 +19,10 @@ void Init_I2C()
 
 	UCB0CTL0 = UCMST + UCMODE_3 + UCSYNC;     			// I2C Master, synchronous mode
 	UCB0CTL1 = UCSSEL_2 + UCSWRST;            			// Use SMCLK, keep SW reset				????????? poate facem numai |=(sau egal) fara keep soft reset
-	//UCB0BR0 = 0x50;                             		// 100kHz
-	UCB0BR0 = 0x13;                             		// 400kHz
+	//UCB0BR0 = 0x50;                             		// 100kHz on 8Mhz
+	//UCB0BR0 = 0x13;                             		// 400kHz on 8Mhz
+	//UCB0BR0 = 0x9;                             		// 400kHz on 4Mhz
+	UCB0BR0 = 0x27;                             		// 98.40kHz on 4Mhz
 	UCB0BR1 = 0;
 	//UCB0I2CSA = 0x49;                         		// Slave Address is 069h
 
@@ -57,34 +59,36 @@ void Stop_I2C()
 // The USCI_B0 data ISR is used to move received data from the I2C slave
 // to the MSP430 memory. It is structured such that it can be used to receive
 //-------------------------------------------------------------------------------
-#pragma vector = USCIAB0TX_VECTOR
-__interrupt void USCIAB0TX_ISR(void)
+void I2C_RX_Interrupt()
 {
-  static uint8 count1=0;
-  static uint8 count2=0;
-  if (IFG2 &= UCB0RXIFG)
+  static uint8 count=0;
+
   {                              					// Master Recieve?
-	  RxBuffer[count1]=UCB0RXBUF;
-	  count1++;
-	  if (count1 == (length-1) ) Stop_I2C();  		// I2C stop condition then length-1
-	  if (count1 == length)
+	  RxBuffer[count]=UCB0RXBUF;
+	  count++;
+	  if (count == (length-1) ) Stop_I2C();  		// I2C stop condition then length-1
+	  if (count == length)
 	  {
 		  isBusy=false;
-		  count1 = 0;
+		  count = 0;
 	  }
+  }
+
 }
-  else											// Master Transmit
+void I2C_TX_Interrupt()										// Master Transmit
+{
+	static uint8 count=0;
 	{
-	  if (count2 < length)                  	// Check TX byte counter
+	  if (count < length)                  	// Check TX byte counter
 		{
-			UCB0TXBUF = TxBuffer[count2];        // Load TX buffer
-			count2++;                            // Decrement TX byte counter
+			UCB0TXBUF = TxBuffer[count];        // Load TX buffer
+			count++;                            // Decrement TX byte counter
 		}
 		else
 		{
-		  Stop_I2C();                // I2C stop condition
+		  //Stop_I2C();                // I2C stop condition
 		  isBusy=false;
-		  count2 = 0;
+		  count = 0;
 		}
 //	  UCB0TXBUF = 0x01;
 //	  if (count2==1)
@@ -94,14 +98,8 @@ __interrupt void USCIAB0TX_ISR(void)
 //	  }
 //	  count2++;
 	}
-	__bis_SR_register(GIE);        // interrupts
 }
 //-------------------------------------------------------------------------------
 // The USCI_B0 data ISR is used to move received data from the I2C slave
 // to the MSP430 memory. It is structured such that it can be used to receive
 //-------------------------------------------------------------------------------
-#pragma vector = USCIAB0RX_VECTOR
-__interrupt void USCIAB0RX_ISR(void)
-{
-	__bis_SR_register(GIE);        // interrupts
-}

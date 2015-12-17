@@ -13,6 +13,8 @@ uint16 ADS1115_ConversionRegister(void)
 	TxBuffer[0] = Conversion_Register;
 	length = 1;
 	Start_I2C_Transmition();
+	while (isBusy) {}
+	Stop_I2C();                // I2C stop condition
 
 	length = 2;
 	Start_I2C_Reception();
@@ -20,6 +22,7 @@ uint16 ADS1115_ConversionRegister(void)
 	returnValue =  RxBuffer[0];
 	returnValue =  returnValue<<8;
 	returnValue += RxBuffer[1];
+
 	return returnValue;
 }
 
@@ -27,10 +30,12 @@ void ADS1115_Write_ConfigRegister()
 {
 	UCB0I2CSA = ADS1115_ADRESS;                         		// Slave Address is 069h
 	TxBuffer[0] = Config_Register;
-	TxBuffer[1] = ((NoEfect | AIN0P_AIN1N 						| V6_144 	| ContinuousConversion)>>8 );
+	TxBuffer[1] = ((NoEfect | AIN0P_AIN1N 						| V0_256_1 	| ContinuousConversion)>>8 );
 	TxBuffer[2] = ( SPS860 	| TraditionalComparatorHysteresis 	| ActiveLow | Non_LatchingComparator | DisableComparator);
 	length = 3;
 	Start_I2C_Transmition();
+	while (isBusy) {}
+	Stop_I2C();                // I2C stop condition
 }
 void ADS1115_Write_ConfigRegister_AIN0P_GND()
 {
@@ -75,6 +80,8 @@ uint16 ADS1115_Read_ConfigRegister()
 	TxBuffer[0] = Config_Register;
 	length = 1;
 	Start_I2C_Transmition();
+	while (isBusy) {}
+	Stop_I2C();                // I2C stop condition
 
 	length = 2;
 	Start_I2C_Reception();
