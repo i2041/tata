@@ -26,8 +26,9 @@ void Init_Uart()
 	UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
 	UC0IE |= UCA0TXIE; // Enable USCI_A0 RX interrupt
 }
-void Uart_send()
+void Uart_send(uint8 size)
 {
+	TxBuffer_Uart_length = size;
 	UCA0TXBUF = TxBuffer_Uart[0]; //send first element to provoke interrupt
 }
 void Uart_command(uint8 NrOfElements)

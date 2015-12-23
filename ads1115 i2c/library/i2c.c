@@ -32,16 +32,19 @@ void Init_I2C()
 	IE2 |= UCB0TXIE;                         			// Enable TX interrupt
 	_EINT();
 }
-void Start_I2C_Transmition()
+void Start_I2C_Transmition(uint8 size, I2C_STATE withstop)
 {
+	length = size;
 	while (isBusy);
 	isBusy = true;
 	while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
 	UCB0CTL1 |= UCTR + UCTXSTT;             // I2C TX, start condition
 	while (isBusy);
+	if (withstop) Stop_I2C();                // I2C stop condition
 }
-void Start_I2C_Reception(void)
+void Start_I2C_Reception(uint8 size)
 {
+	length = size;
 	while (isBusy);
 	isBusy = true;
 	while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
@@ -61,34 +64,34 @@ void Stop_I2C()
 //-------------------------------------------------------------------------------
 void I2C_RX_Interrupt()
 {
-  static uint8 count=0;
+  static uint8 count1=0;
 
   {                              					// Master Recieve?
-	  RxBuffer[count]=UCB0RXBUF;
-	  count++;
-	  if (count == (length-1) ) Stop_I2C();  		// I2C stop condition then length-1
-	  if (count == length)
+	  RxBuffer[count1]=UCB0RXBUF;
+	  count1++;
+	  if (count1 == (length-1) ) Stop_I2C();  		// I2C stop condition then length-1
+	  if (count1 == length)
 	  {
 		  isBusy=false;
-		  count = 0;
+		  count1 = 0;
 	  }
   }
 
 }
 void I2C_TX_Interrupt()										// Master Transmit
 {
-	static uint8 count=0;
+	static uint8 count2=0;
 	{
-	  if (count < length)                  	// Check TX byte counter
+	  if (count2 < length)                  	// Check TX byte counter
 		{
-			UCB0TXBUF = TxBuffer[count];        // Load TX buffer
-			count++;                            // Decrement TX byte counter
+			UCB0TXBUF = TxBuffer[count2];        // Load TX buffer
+			count2++;                            // Decrement TX byte counter
 		}
 		else
 		{
 		  //Stop_I2C();                // I2C stop condition
 		  isBusy=false;
-		  count = 0;
+		  count2 = 0;
 		}
 //	  UCB0TXBUF = 0x01;
 //	  if (count2==1)

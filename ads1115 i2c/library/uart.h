@@ -19,5 +19,5 @@ uint8 RxBuffer_Uart[SizeOfBuffer];
 void Init_Uart();
 void Uart_RX_Interrupt();
 void Uart_TX_Interrupt();
-
+void Uart_send(uint8 size);
 #endif /* UART_H_ */

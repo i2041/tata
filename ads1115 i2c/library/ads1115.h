@@ -25,7 +25,8 @@ For a read status:
 typedef enum
 {
 	NoEfect					=0x0000,
-	BeginSingleConversion	=0x8000
+	BeginSingleConversion	=0x8000,
+	ConversionFinished		=0x8000
 }OS;
 /*
 =========================================================MUX[2:0]: Input multiplexer configuration (ADS1115 only)
@@ -179,11 +180,7 @@ typedef enum
 //	COMP_QUE	;
 //}ConfigRegister;;
 uint16 	ADS1115_ConversionRegister();
-void ADS1115_Write_ConfigRegister();
-void 	ADS1115_Write_ConfigRegister_AIN0P_GND();
-void 	ADS1115_Write_ConfigRegister_AIN1P_GND();
-void 	ADS1115_Write_ConfigRegister_AIN2P_GND();
-void 	ADS1115_Write_ConfigRegister_AIN3P_GND();
+void ADS1115_Write_ConfigRegister(MUX mux_pin);
 uint16 	ADS1115_Read_ConfigRegister();
 void 	ADS1115_LO_TreshRegister();
 void 	ADS1115_HI_TreshRegister();
