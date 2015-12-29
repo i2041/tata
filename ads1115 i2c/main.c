@@ -3,6 +3,7 @@
 #include "library/ads1115.h"
 #include "library/uart.h"
 #include "library/mlx90614.h"
+#include "library/timer.h"
 int16 tmpValue;
 uint32 tmpValue2;
 uint16 tmpValue88;
@@ -31,9 +32,7 @@ uint8 tmpCount = 0;
  */
 int main(void) {
     WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
-    DCOCTL = CALDCO_16MHZ;     				// Set DCO step and modulation
-	BCSCTL1 = CALBC1_16MHZ;     			// Set range
-	BCSCTL2 = DIVS_2;
+    configureFrequency();
 	Init_I2C();
 	Init_Uart();
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
