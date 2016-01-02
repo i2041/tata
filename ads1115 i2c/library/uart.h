@@ -12,7 +12,7 @@
 
 #define RXD BIT1
 #define TXD BIT2
-#define SizeOfBuffer 20
+#define SizeOfBuffer 50
 uint8 TxBuffer_Uart[SizeOfBuffer];
 uint8 TxBuffer_Uart_length;
 uint8 RxBuffer_Uart[SizeOfBuffer];

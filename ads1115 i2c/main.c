@@ -4,9 +4,10 @@
 #include "library/uart.h"
 #include "library/mlx90614.h"
 #include "library/timer.h"
+#include "library/printf.h"
 int16 tmpValue;
 uint32 tmpValue2;
-uint16 tmpValue88;
+float tmpValue88;
 
 
 
@@ -40,6 +41,7 @@ int main(void) {
 
 	while(1)
 	{
+/*
 		ADS1115_Write_ConfigRegister(AIN0P_GND);
 		while ( (ADS1115_Read_ConfigRegister() & BeginSingleConversion) == 0){}
 
@@ -125,7 +127,7 @@ int main(void) {
 		tmpValue4+=25;
 		tmpValue = (uint16)tmpValue4;
 
-		//__delay_cycles(1000000);
+		__delay_cycles(1000000);
 
 		TxBuffer_Uart[0]=(tmpValue/10000)+48;tmpValue=tmpValue%10000;
 		TxBuffer_Uart[1]=(tmpValue/1000)+48;tmpValue=tmpValue%1000;
@@ -137,15 +139,16 @@ int main(void) {
 		Uart_send(7);	// 6 element, from 0 to 5
 
 		__delay_cycles(1000000);
-
-		tmpValue88 = Mlx90614_readObjectTempC();
-		TxBuffer_Uart[0]=(tmpValue88/10000)+48;tmpValue88=tmpValue88%10000;
-		TxBuffer_Uart[1]=(tmpValue88/1000)+48;tmpValue88=tmpValue88%1000;
-		TxBuffer_Uart[2]=(tmpValue88/100)+48;tmpValue88=tmpValue88%100;
-		TxBuffer_Uart[3]=(tmpValue88/10)+48;tmpValue88=tmpValue88%10;
-		TxBuffer_Uart[4]=(tmpValue88)+48;
-		TxBuffer_Uart[5]='\n';
-		Uart_send(6);	// 6 element, from 0 to 5
+*/
+		tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
+		print("MLX90614=%f",tmpValue88);
+//		TxBuffer_Uart[0]=(tmpValue88/10000)+48;tmpValue88=tmpValue88%10000;
+//		TxBuffer_Uart[1]=(tmpValue88/1000)+48;tmpValue88=tmpValue88%1000;
+//		TxBuffer_Uart[2]=(tmpValue88/100)+48;tmpValue88=tmpValue88%100;
+//		TxBuffer_Uart[3]=(tmpValue88/10)+48;tmpValue88=tmpValue88%10;
+//		TxBuffer_Uart[4]=(tmpValue88)+48;
+//		TxBuffer_Uart[5]='\n';
+//		Uart_send(6);	// 6 element, from 0 to 5
 		__delay_cycles(1000000);
 	}
 	return 0;
