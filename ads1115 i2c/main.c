@@ -5,6 +5,7 @@
 #include "library/mlx90614.h"
 #include "library/timer.h"
 #include "library/printf.h"
+#include "library/TLC5947.h"
 int16 tmpValue;
 uint32 tmpValue2;
 float tmpValue88;
@@ -32,10 +33,13 @@ uint8 tmpCount = 0;
  * main.c
  */
 int main(void) {
-    WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+    uint32 tmpValue[]={11,4000,300};
+	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
     configureFrequency();
 	Init_I2C();
 	Init_Uart();
+	tlc5947_init();
+	tlc5947_write(3,&tmpValue);
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
 
