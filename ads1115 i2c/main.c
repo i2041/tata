@@ -33,13 +33,20 @@ uint8 tmpCount = 0;
  * main.c
  */
 int main(void) {
-    uint32 tmpValue[]={11,4000,300};
+	display[0]=11;
+	display[1]=111;
+	display[2]=2222;
 	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
     configureFrequency();
+    TA0CTL = TASSEL_2 + ID_2 + MC_2;  	//SMCLK,UPMODE,InteruptEnebled
 	Init_I2C();
 	Init_Uart();
 	tlc5947_init();
-	tlc5947_write(3,&tmpValue);
+	TA0CTL = TASSEL_2 + ID_2 + MC_2 + TACLR;  	//SMCLK,UPMODE,InteruptEnebled
+	tlc5947_calculate_digits(0,1);
+	tlc5947_calculate_digits(1,12);
+	tlc5947_calculate_digits(2,123);
+	tlc5947_update_displays();
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
 

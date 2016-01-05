@@ -23,20 +23,21 @@ uint8 tlc5947_get_Intensity()
 	tmpValue =(displayIntensity*100)/0xFFF;
 	return (uint8)tmpValue;
 }
-void tlc5947_write(uint8 numDrivers,uint32 *displayData)//ThreeBytes *array
+void tlc5947_update_displays()//ThreeBytes *array
 {
-	  uint32 ch;
-	  uint8  bit ;
-	  P3OUT &= ~_latch;
-	  while (numDrivers)
-	  {
+		uint8  bit;
+		uint8  ch;
+		uint8  numDrivers = NumOfDrivers;
+		P3OUT &= ~_latch;
+		while (numDrivers)
+		{
 		  // 24 channels per TLC5974
 		  for (ch=24; ch >= 1 ; ch--)
 		  {
-			if ( *displayData & ((uint32)1 << (ch-1)) )	//verify which channel need to activate 0->24 Ch
+			if (display[NumOfDrivers - numDrivers] & ((uint32)1 << (ch-1)) )	//verify which channel need to activate 0->24 Ch
 			{
 				// 12 bits per channel, send MSB first
-				for ( bit=12; bit>=1; bit--)
+				for (bit=12; bit>=1; bit--)
 				{
 				  P3OUT &= ~_clk;		//clock low
 
@@ -51,21 +52,53 @@ void tlc5947_write(uint8 numDrivers,uint32 *displayData)//ThreeBytes *array
 			else										//In case if channel don't need to activate
 			{											//leave 12bit 0(zero) for this channel
 				P3OUT &= ~_sin;	//data low
-				for ( bit=12; bit>=1; bit--)
+				for (bit=12; bit>=1; bit--)
 				{
 				  P3OUT &= ~_clk;		//clock low
 				  P3OUT |= _clk;		//clock high
 				}
 			}
 		  }
-		  displayData++;
 		  numDrivers--;
-	  }
-	  P3OUT &= ~_clk;			//clock low
-
-	  P3OUT |= _latch;			//latch high
-	  P3OUT &= ~_latch;			//latch low
+		}
+		P3OUT &= ~_clk;				//clock low
+		P3OUT |= _latch;			//latch high
+		P3OUT &= ~_latch;			//latch low
 }
+void tlc5947_calculate_digits(uint8 displayNr, uint16 value)
+{
+	uint32 tmpValue2=0;
+	uint8  digit[3];
+	uint8  DigitNr;
+	uint32 powValue=10;
+	for (DigitNr=0;DigitNr < (NumOfDigits-1);DigitNr++)
+	{
+		powValue*=10;
+	}
+	value = value%powValue;
+	digit[0]= (value/100);
+	digit[1]= (value%100)/10;
+	digit[2]= (value%10);
 
+	for(DigitNr=0;DigitNr < NumOfDigits;DigitNr++)
+	{
+		switch (digit[DigitNr])
+			{
+				case 0: tmpValue2 |= seg_A + seg_B + seg_C + seg_D + seg_E + seg_F; break;
+				case 1: tmpValue2 |= seg_B + seg_C; break;
+				case 2: tmpValue2 |= seg_A + seg_B + seg_G + seg_E + seg_D; break;
+				case 3: tmpValue2 |= seg_A + seg_B + seg_G + seg_C + seg_D; break;
+				case 4: tmpValue2 |= seg_F + seg_G + seg_B + seg_C ; break;
+				case 5: tmpValue2 |= seg_A + seg_F + seg_G + seg_C + seg_D; break;
+				case 6: tmpValue2 |= seg_A + seg_F + seg_E + seg_D + seg_C + seg_G; break;
+				case 7: tmpValue2 |= seg_A + seg_B + seg_C; break;
+				case 8: tmpValue2 |= seg_A + seg_B + seg_C + seg_D + seg_E + seg_F + seg_G;break;
+				case 9: tmpValue2 |= seg_A + seg_F + seg_G + seg_B + seg_C + seg_D; break;
+				default:break;
+			}
+		if ( DigitNr != (NumOfDigits-1) ) tmpValue2=tmpValue2<<8; //last time dont need Rshift
+	}
+	display[displayNr] = tmpValue2;
+}
 
 
