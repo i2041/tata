@@ -6,6 +6,7 @@
 #include "library/timer.h"
 #include "library/printf.h"
 #include "library/TLC5947.h"
+#include "library/CiocaneLipit.h"
 int16 tmpValue;
 uint32 tmpValue2;
 float tmpValue88;
@@ -33,20 +34,17 @@ uint8 tmpCount = 0;
  * main.c
  */
 int main(void) {
-	display[0]=11;
-	display[1]=111;
-	display[2]=2222;
 	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+	tlc5947_init();
+	tlc5947_calculate_digits(0,987);
+	tlc5947_calculate_digits(1,654);
+	tlc5947_calculate_digits(2,321);
+	tlc5947_update_displays();
     configureFrequency();
-    TA0CTL = TASSEL_2 + ID_2 + MC_2;  	//SMCLK,UPMODE,InteruptEnebled
 	Init_I2C();
 	Init_Uart();
-	tlc5947_init();
-	TA0CTL = TASSEL_2 + ID_2 + MC_2 + TACLR;  	//SMCLK,UPMODE,InteruptEnebled
-	tlc5947_calculate_digits(0,1);
-	tlc5947_calculate_digits(1,12);
-	tlc5947_calculate_digits(2,123);
-	tlc5947_update_displays();
+
+	ciocaneLipit_Init(init);
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
 
@@ -151,8 +149,8 @@ int main(void) {
 
 		__delay_cycles(1000000);
 */
-		tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
-		print("MLX90614=%f",tmpValue88);
+		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
+		print("MLX90614=%f",10.2);
 //		TxBuffer_Uart[0]=(tmpValue88/10000)+48;tmpValue88=tmpValue88%10000;
 //		TxBuffer_Uart[1]=(tmpValue88/1000)+48;tmpValue88=tmpValue88%1000;
 //		TxBuffer_Uart[2]=(tmpValue88/100)+48;tmpValue88=tmpValue88%100;

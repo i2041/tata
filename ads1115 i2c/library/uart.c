@@ -17,9 +17,11 @@ void Init_Uart()
 	P1SEL2 |= RXD + TXD ; // P1.1 = RXD, P1.2=TXD
 	UCA0CTL1 |= UCSWRST;                      			// Enable SW reset
 	UCA0CTL1 |= UCSSEL_2; // SMCLK
-	UCA0BR0 = 160; // 1MHz 115200
-	UCA0BR1 = 1; // 1MHz 115200
-	UCA0MCTL = UCBRS_6; // Modulation UCBRSx = 5
+//	UCA0BR0 = 160; // 1MHz 115200
+//	UCA0BR1 = 1; // 1MHz 115200
+	UCA0BR0 = 34; // 4MHz 115200
+	UCA0BR1 = 0;
+	UCA0MCTL = UCBRS_6;
 	UCA0CTL1 &= ~UCSWRST; // **Initialize USCI state machine**
 	IFG2 &= ~UCA0TXIFG;
 	IFG2 &= ~UCA0RXIFG;
