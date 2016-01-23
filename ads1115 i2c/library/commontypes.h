@@ -4,7 +4,6 @@
  *  Created on: 11.12.2015
  *      Author: uidg6243
  */
-
 #ifndef COMMONTYPES_H_
 #define COMMONTYPES_H_
 
@@ -19,4 +18,24 @@ typedef long long int         			int64;	//-9223372036854775808 - 922337203685477
 typedef uint8							bool;
 #define false 0
 #define true 1
+
+typedef enum
+{
+	init=0,
+	stop,
+	stop_statie1,
+	stop_statie2,
+	start,
+	start_statie1,
+	start_statie2
+}States;
+typedef enum
+{
+	rotireNull,
+	rotireStanga,
+	rotireStangaTwice,
+	rotireDreapta,
+	rotireDreaptaTwice,
+	apasare
+}EncodeStates;
 #endif /* COMMONTYPES_H_ */

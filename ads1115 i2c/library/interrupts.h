@@ -10,5 +10,12 @@
 #include "commontypes.h"
 #include <msp430.h>
 
+bool encoder1 ;
+bool encoder2 ;
+bool encoder3 ;
+
+uint8 tmp1;
+uint8 tmp2;
+uint8 tmp3;
 
 #endif /* INTERRUPTS_H_ */

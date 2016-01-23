@@ -5,7 +5,9 @@
  *      Author: Serghei
  */
 #include "interrupts.h"
-
+#include "220V.h"
+#include "CiocaneLipit.h"
+#include "TLC5947.h"
 #pragma vector=TIMER1_A1_VECTOR	//timer 1
 __interrupt void Timer_A1 (void)
 {
@@ -39,8 +41,9 @@ __interrupt void port1_isr(void) {
 	case (BIT2):
 	break;
 
-	case (BIT3):
-	P1IFG &= ~ BIT3;	//Button3 PRESSED
+	case (BIT3):	//Button 3
+	P1IFG 	&= ~ BIT3;
+	P3OUT ^= (CIOCAN_PWM1 + CIOCAN_PWM2);
 	break;
 
 	case (BIT4):
@@ -56,7 +59,7 @@ __interrupt void port1_isr(void) {
 	break;
 
 	default://warning apear interrupt, to do something
-	__enable_interrupt();
+	P1IFG 	&=0;
 	break;
 	}
 	__enable_interrupt();
@@ -65,43 +68,33 @@ __interrupt void port1_isr(void) {
 #pragma vector = PORT2_VECTOR
 __interrupt void port2_isr(void) {
 
-	switch(P2IFG)
+	if (P2IFG & BIT0)	//encoder 2.1
 	{
-	case (BIT0):
-	P2IFG &= ~ BIT0;	//encoder 2.1
-	break;
-
-	case (BIT1):
-	P2IFG &= ~ BIT1;	//encoder 2.2
-	break;
-
-	case (BIT2):
-	P2IFG &= ~ BIT2;	//button2
-	break;
-
-	case (BIT3):
-	P2IFG &= ~ BIT3;	//encoder 1.1
-	break;
-
-	case (BIT4):
-	P2IFG &= ~ BIT4;	//encoder 1.2
-	break;
-
-	case (BIT5):
-	P2IFG &= ~ BIT5;	//button1
-	break;
-
-	case (BIT6):
-	P2IFG &= ~ BIT6;	//encoder 3.1
-	break;
-
-	case (BIT7):
-	P2IFG &= ~ BIT7;	//encoder 3.2
-	break;
-
-	default://warning apear interrupt, to do something
-	__enable_interrupt();
-	break;
+	P2IFG &= ~ BIT0;
+	if (P2IN & BIT1) tmp2 -= 1;
+	else tmp2 += 1;
+	}
+	if (P2IFG & BIT2)	//button2
+	{
+	P2IFG &= ~ BIT2;
+	P3OUT ^= BIT0;
+	}
+	if (P2IFG & BIT3)	//encoder 1.1
+	{
+	P2IFG &= ~ BIT3;
+	if (P2IN & BIT4) tmp1 -= 1;
+	else tmp1 += 1;
+	}
+	if (P2IFG & BIT5)	//button1
+	{
+	P2IFG &= ~ BIT5;
+	P3OUT   ^= V220_PWM;
+	}
+	if (P2IFG & BIT6)	//encoder 3.1
+	{
+	P2IFG &= ~ BIT6;
+	if (P2IN & BIT7) tmp3 -= 1;
+	else tmp3 += 1;
 	}
 	__enable_interrupt();
 }

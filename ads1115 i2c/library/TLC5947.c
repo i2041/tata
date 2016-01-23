@@ -8,7 +8,7 @@
 void tlc5947_init()
 {
 	P3DIR |= _sin + _clk + _latch;
-	displayIntensity = 0x07F ;	//max 0x0FFF
+	displayIntensity = 0x0FF ;	//max 0x0FFF
 }
 void tlc5947_Set_Intensity(uint8 displayintensity)
 {
@@ -90,7 +90,7 @@ void tlc5947_calculate_digits(uint8 displayNr, uint16 value)
 		{
 			switch (digit[(NumOfDigits-1)-DigitNr])
 				{
-				case 0: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4) + (seg_D + seg_E + seg_F)>>4; break;
+				case 0: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4) + ((seg_D + seg_E + seg_F)>>4); break;
 				case 1: tmpValue2 |= (seg_B + seg_C)<<4; break;
 				case 2: tmpValue2 |= ((seg_A + seg_B)<<4) + ((seg_D + seg_E + seg_G)>>4); break;
 				case 3: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4) + ((seg_D + seg_G)>>4); break;
@@ -99,10 +99,10 @@ void tlc5947_calculate_digits(uint8 displayNr, uint16 value)
 				case 6: tmpValue2 |= ((seg_A + seg_C)<<4) + ((seg_F + seg_E + seg_D  + seg_G)>>4); break;
 				case 7: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4); break;
 				case 8: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4) + ((seg_D + seg_E + seg_F + seg_G)>>4);break;
-				case 9: tmpValue2 |= ((seg_A + seg_C)<<4) + ((seg_F + seg_G + seg_B+ seg_D)>>4); break;
+				case 9: tmpValue2 |= ((seg_A + seg_B + seg_C)<<4) + ((seg_F + seg_G + seg_B+ seg_D)>>4); break;
 				default:break;
 				}
-			if (displayNr == 2 ) tmpValue2 |= (seg_DP<<4);//seg_A not work and change on DP;
+			if (displayNr == 2 && digit[(NumOfDigits-1)-DigitNr] != 1 && digit[(NumOfDigits-1)-DigitNr] != 4) tmpValue2 |= (seg_DP<<4);//seg_A not work and change on DP;
 		}
 		else
 		{
@@ -121,7 +121,7 @@ void tlc5947_calculate_digits(uint8 displayNr, uint16 value)
 				default:break;
 			}
 		}
-		if ( DigitNr != (NumOfDigits-1) ) tmpValue2=tmpValue2<<8; //last time dont need Rshift
+		if ( DigitNr != (NumOfDigits-1) ) tmpValue2=(tmpValue2<<8); //last time dont need Rshift
 	}
 	display[(NumOfDrivers-1)-displayNr] = tmpValue2;
 }
