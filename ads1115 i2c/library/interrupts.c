@@ -5,9 +5,7 @@
  *      Author: Serghei
  */
 #include "interrupts.h"
-#include "220V.h"
-#include "CiocaneLipit.h"
-#include "TLC5947.h"
+
 #pragma vector=TIMER1_A1_VECTOR	//timer 1
 __interrupt void Timer_A1 (void)
 {
@@ -97,4 +95,20 @@ __interrupt void port2_isr(void) {
 	else tmp3 += 1;
 	}
 	__enable_interrupt();
+}
+
+#pragma vector = USCIAB0TX_VECTOR
+__interrupt void USCI0TX_ISR(void)
+{
+	if (IFG2 & UCB0RXIFG) {I2C_RX_Interrupt();IFG2 &= ~UCB0RXIFG;}
+	if (IFG2 & UCB0TXIFG) {I2C_TX_Interrupt();IFG2 &= ~UCB0TXIFG;}
+	if (IFG2 & UCA0TXIFG) {Uart_TX_Interrupt();IFG2 &= ~UCA0TXIFG;}
+	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
+	__bis_SR_register(GIE);        // interrupts
+}
+#pragma vector = USCIAB0RX_VECTOR
+__interrupt void USCIAB0RX_ISR(void)
+{
+	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
+	__bis_SR_register(GIE);        // interrupts
 }

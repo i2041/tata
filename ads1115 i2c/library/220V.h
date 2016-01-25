@@ -18,7 +18,6 @@
 #define V220_PWM BIT1	//PORT 3
 
 void V220(States state);
-void V220_Encoder(EncodeStates state);
 void V220_cyclic();
 
 uint8 _220V_State;

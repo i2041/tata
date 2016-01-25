@@ -9,6 +9,7 @@
 
 void watchDogConfigure()
 {
+	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
 	//SMCLK => 8Mhz
 	//		Password | timerMode|cleareCounter|   div		 div
 	//WDTCTL = WDTPW | WDTTMSEL |	WDTCNTCL  | WDTIS1  | 	WDTIS0	;	//8uS,

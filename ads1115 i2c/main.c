@@ -43,7 +43,7 @@ int main(void) {
 	tmp2 = 111;
 	tmp3 = 111;
 
-	WDTCTL = WDTPW | WDTHOLD;	// Stop watchdog timer
+	watchDogConfigure();
 	configureFrequency();
 	tlc5947_init();
 	tlc5947_calculate_digits(0,111);
@@ -54,6 +54,7 @@ int main(void) {
 	Init_Uart();
 	V220(init);
 	ciocaneLipit(init);
+	ciocaneLipit(start);
 	V24(init);
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
@@ -135,18 +136,3 @@ int main(void) {
 	return 0;
 }
 
-#pragma vector = USCIAB0TX_VECTOR
-__interrupt void USCI0TX_ISR(void)
-{
-	if (IFG2 & UCB0RXIFG) {I2C_RX_Interrupt();IFG2 &= ~UCB0RXIFG;}
-	if (IFG2 & UCB0TXIFG) {I2C_TX_Interrupt();IFG2 &= ~UCB0TXIFG;}
-	if (IFG2 & UCA0TXIFG) {Uart_TX_Interrupt();IFG2 &= ~UCA0TXIFG;}
-	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
-	__bis_SR_register(GIE);        // interrupts
-}
-#pragma vector = USCIAB0RX_VECTOR
-__interrupt void USCIAB0RX_ISR(void)
-{
-	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
-	__bis_SR_register(GIE);        // interrupts
-}

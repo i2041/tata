@@ -15,6 +15,7 @@
 #define _latch	BIT5	//port3
 #define NumOfDrivers 3
 #define NumOfDigits 3
+
 typedef enum segmentsOfDisplay
 {
 	seg_A 	= 0x01,
@@ -26,6 +27,15 @@ typedef enum segmentsOfDisplay
 	seg_F 	= 0x40,
 	seg_G 	= 0x80
 }segments;
+//	typedef union
+//	{
+//		struct
+//		{
+//			uint32 	ch	:24,
+//					bit	:8;
+//		}FourBytesUnion;
+//	}tmpValue2223;
+//	tmpValue2223 tmpValue;
 
 uint16 displayIntensity;
 uint32 display[NumOfDrivers];

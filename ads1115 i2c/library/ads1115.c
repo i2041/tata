@@ -43,10 +43,3 @@ uint16 ADS1115_Read_ConfigRegister()
 	returnValue += RxBuffer[1];
 	return returnValue;
 }
-//uint16 ADS1115_Read_ConfigRegister()
-//{
-//	uint16 returnValue;
-//	TxBuffer[0] = Conversion_Register;
-//	length = 1;
-//	//Start_I2C_Reception();
-//}

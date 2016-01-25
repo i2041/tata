@@ -166,22 +166,8 @@ typedef enum
 	Hi_Tresh_Register	=0x03
 }POINTER_REGISTER;
 
-
-//typedef struct
-//{
-//	OpStatus	;
-//	MUX			;
-//	PGA			;
-//	MODE		;
-//	DR			;
-//	COMP_MODE	;
-//	COMP_POL	;
-//	COMP_LAT	;
-//	COMP_QUE	;
-//}ConfigRegister;;
 uint16 	ADS1115_ConversionRegister();
-void ADS1115_Write_ConfigRegister(MUX mux_pin);
 uint16 	ADS1115_Read_ConfigRegister();
-void 	ADS1115_LO_TreshRegister();
-void 	ADS1115_HI_TreshRegister();
+void 	ADS1115_Write_ConfigRegister(MUX mux_pin);
+
 #endif /* ADS1115_H_ */

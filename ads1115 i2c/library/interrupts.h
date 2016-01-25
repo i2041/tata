@@ -7,8 +7,14 @@
 
 #ifndef INTERRUPTS_H_
 #define INTERRUPTS_H_
+
 #include "commontypes.h"
 #include <msp430.h>
+#include "220V.h"
+#include "CiocaneLipit.h"
+#include "TLC5947.h"
+#include "i2c.h"
+#include "uart.h"
 
 bool encoder1 ;
 bool encoder2 ;

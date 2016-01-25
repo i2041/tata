@@ -20,7 +20,6 @@
 #define MIN_DUTY_CYCLE 0x5555
 
 void ciocaneLipit(States state);
-void ciocaneLipit_Encoder(EncodeStates state);
 void ciocaneLipit_cyclic();
 
 uint8 _ciocanLipit_State;

@@ -13,14 +13,15 @@ void tlc5947_init()
 void tlc5947_Set_Intensity(uint8 displayintensity)
 {
 	uint32 tmpValue;
-	tmpValue =(displayintensity*0xFFF);
+	if (displayintensity > 100) displayintensity=100;//prevent in case more 100%
+	tmpValue =( (displayintensity*0xFFF)/100 );
 	displayIntensity = (uint16)tmpValue;
 }
 uint8 tlc5947_get_Intensity()
 {
 	uint32 tmpValue;
 	tmpValue = displayIntensity;
-	tmpValue =(displayIntensity*100)/0xFFF;
+	tmpValue =( (displayIntensity*100)/0xFFF );
 	return (uint8)tmpValue;
 }
 //#pragma FUNCTION_OPTIONS( tlc5947_update_displays,"--opt_level=0" )
@@ -66,7 +67,6 @@ void tlc5947_update_displays()//ThreeBytes *array
 		}
 		P3OUT &= ~_clk;				//clock low
 		P3OUT |= _latch;			//latch high
-		__delay_cycles(1000);
 		P3OUT &= ~_latch;			//latch low
 }
 void tlc5947_calculate_digits(uint8 displayNr, uint16 value)

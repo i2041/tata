@@ -43,18 +43,6 @@ void V220(States state)
 		}
 	}
 }
-void V220_Encoder(EncodeStates state)
-{
-	switch (state)
-	{
-	case rotireStanga:
-	break;
-	case rotireDreapta:
-	break;
-	case apasare:
-	break;
-	}
-}
 void V220_cyclic()
 {
 }

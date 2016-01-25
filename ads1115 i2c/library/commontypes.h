@@ -29,13 +29,5 @@ typedef enum
 	start_statie1,
 	start_statie2
 }States;
-typedef enum
-{
-	rotireNull,
-	rotireStanga,
-	rotireStangaTwice,
-	rotireDreapta,
-	rotireDreaptaTwice,
-	apasare
-}EncodeStates;
+
 #endif /* COMMONTYPES_H_ */
