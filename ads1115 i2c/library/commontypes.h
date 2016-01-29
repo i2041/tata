@@ -25,9 +25,14 @@ typedef enum
 	stop,
 	stop_statie1,
 	stop_statie2,
-	start,
-	start_statie1,
-	start_statie2
+	start
 }States;
-
+//uint16 map (uint16 x, uint16 in_min, uint16 in_max, uint16 out_min, uint16 out_max)
+//{
+//	uint32 tmpValue;
+//	tmpValue  = (x - in_min) * (out_max - out_min);
+//	tmpValue /= (in_max - in_min);
+//	tmpValue += out_min;
+//	return (uint16)tmpValue;
+//}
 #endif /* COMMONTYPES_H_ */

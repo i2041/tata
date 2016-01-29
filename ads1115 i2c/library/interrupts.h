@@ -15,6 +15,7 @@
 #include "TLC5947.h"
 #include "i2c.h"
 #include "uart.h"
+#include "task.h"
 
 bool encoder1 ;
 bool encoder2 ;

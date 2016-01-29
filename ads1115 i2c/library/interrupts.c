@@ -15,7 +15,7 @@ __interrupt void Timer_A1 (void)
 	 break;
 	 case 4:	// CCR2
 	 break;
-	 case 10: 	// overflow ? reserved
+	 case 10: 	task33ms();// overflow ? reserved
 	 break;
 	 case 14: 	// overflow ?
 	 break;
@@ -26,39 +26,21 @@ __interrupt void Timer_A1 (void)
 }
 
 #pragma vector = PORT1_VECTOR
-__interrupt void port1_isr(void) {
+__interrupt void port1_isr(void)
+{
 
-	switch(P1IFG)
+	if (P1IFG & BIT3)	//Button 3
 	{
-	case (BIT0):
-	break;
-
-	case (BIT1):
-	break;
-
-	case (BIT2):
-	break;
-
-	case (BIT3):	//Button 3
-	P1IFG 	&= ~ BIT3;
-	P3OUT ^= (CIOCAN_PWM1 + CIOCAN_PWM2);
-	break;
-
-	case (BIT4):
-	break;
-
-	case (BIT5):
-	break;
-
-	case (BIT6):
-	break;
-
-	case (BIT7):
-	break;
-
-	default://warning apear interrupt, to do something
-	P1IFG 	&=0;
-	break;
+		P1IFG 	&= ~ BIT3;
+		if(_ciocanLipit_Mode_temporar == temperatureMode)
+		{
+			_ciocanLipit_Mode_temporar = pwmMode;
+		}
+		else if (_ciocanLipit_Mode_temporar == pwmMode)
+		{
+			_ciocanLipit_Mode_temporar = temperatureMode;
+		}
+		_ciocanLipit_ButtonValidate = 0;
 	}
 	__enable_interrupt();
 }
@@ -68,31 +50,84 @@ __interrupt void port2_isr(void) {
 
 	if (P2IFG & BIT0)	//encoder 2.1
 	{
-	P2IFG &= ~ BIT0;
-	if (P2IN & BIT1) tmp2 -= 1;
-	else tmp2 += 1;
+		P2IFG &= ~ BIT0;
+		if (P2IN & BIT1) tmp2 -= 1;
+		else tmp2 += 1;
 	}
 	if (P2IFG & BIT2)	//button2
 	{
-	P2IFG &= ~ BIT2;
-	P3OUT ^= BIT0;
+		P2IFG &= ~ BIT2;
+
+		//P3OUT ^= BIT0;
 	}
 	if (P2IFG & BIT3)	//encoder 1.1
 	{
-	P2IFG &= ~ BIT3;
-	if (P2IN & BIT4) tmp1 -= 1;
-	else tmp1 += 1;
+		P2IFG &= ~ BIT3;
+		if (P2IN & BIT4) tmp1 -= 1;
+		else tmp1 += 1;
 	}
 	if (P2IFG & BIT5)	//button1
 	{
-	P2IFG &= ~ BIT5;
-	P3OUT   ^= V220_PWM;
+		P2IFG &= ~ BIT5;
+		P3OUT   ^= V220_PWM;
 	}
 	if (P2IFG & BIT6)	//encoder 3.1
 	{
-	P2IFG &= ~ BIT6;
-	if (P2IN & BIT7) tmp3 -= 1;
-	else tmp3 += 1;
+		P2IFG &= ~ BIT6;
+
+		if (P2IN & BIT7)
+		{
+			if (_ciocanLipit_Mode == pwmMode)
+			{
+				if ( _ciocanLipit_ProcentageValue > 1)
+				{
+					TA1CCR1 += (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE)/100; // +1%
+					TA1CCR2 = TA1CCR1;
+					P3SEL 	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
+					_ciocanLipit_ProcentageValue --;
+				}
+				else
+				{
+					_ciocanLipit_ProcentageValue = 0;
+					P3SEL &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+					P3OUT &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+					TA1CCR1 = MAX_DUTY_CYCLE;
+					TA1CCR2 = TA1CCR1;
+				}
+			}
+			else
+			{
+				_ciocanLipit_EncoderValidate = 0;
+				_ciocanLipit_TemperatureTemporar-=1;
+			}
+		}
+		else
+		{
+
+			if (_ciocanLipit_Mode == pwmMode)
+			{
+				if (_ciocanLipit_ProcentageValue < 99)
+				{
+					TA1CCR1 -= (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE)/100; // +1%
+					TA1CCR2 = TA1CCR1;
+					P3SEL 	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
+					_ciocanLipit_ProcentageValue ++;
+				}
+				else
+				{
+					_ciocanLipit_ProcentageValue = 100;
+					P3SEL &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+					P3OUT |=  (CIOCAN_PWM1 + CIOCAN_PWM2);
+					TA1CCR1 = MIN_DUTY_CYCLE;
+					TA1CCR2 = TA1CCR1;
+				}
+			}
+			else
+			{
+				_ciocanLipit_EncoderValidate = 0;
+				_ciocanLipit_TemperatureTemporar+=1;
+			}
+		}
 	}
 	__enable_interrupt();
 }
@@ -111,4 +146,11 @@ __interrupt void USCIAB0RX_ISR(void)
 {
 	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
 	__bis_SR_register(GIE);        // interrupts
+}
+
+#pragma vector = ADC10_VECTOR
+__interrupt void ADC10_ISR(void)
+{
+
+	__enable_interrupt();
 }

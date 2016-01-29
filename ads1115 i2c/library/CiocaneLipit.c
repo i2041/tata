@@ -35,17 +35,28 @@ void ciocaneLipit(States state)
 			/*** Timer_B Set-Up ***/
 			P3DIR	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
 			P3OUT	&=~(CIOCAN_PWM1 + CIOCAN_PWM2);
-			P3SEL	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
+
+			P3SEL	&=~(CIOCAN_PWM1 + CIOCAN_PWM2);
 			P3SEL2	&=~(CIOCAN_PWM1 + CIOCAN_PWM2);
-		  //TA1CTL  = (TASSEL_2 + ID_0 + MC_0  + TAIE);	//SMCLK,div 1,Stop Mode, Interrupt Enable 16.56ms = 0xFFFF
-			TA1CTL  = (TASSEL_2 + ID_1 + MC_0  + TAIE);	//SMCLK,div 2,Stop Mode, Interrupt Enable 33ms = 0xFFFF
+			//ADC Configure ADC10
+			P1SEL |= CIOCAN_ADC1;						// ADC input pin P1.4
+			P1SEL |= CIOCAN_ADC2;						// ADC input pin P1.5
+			ADC10CTL0 = SREF_1 + ADC10SHT_3 + REF2_5V + REFON + ADC10ON;				// no interrupt
+			ADC10AE0 |= CIOCAN_ADC1 + CIOCAN_ADC2;		// Port ADC option select
+
+			//TA1CTL  = (TASSEL_2 + ID_0 + MC_2  + TAIE);	//SMCLK,div 1,Stop Mode, Interrupt Enable 16.56ms = 0xFFFF
+			TA1CTL  = (TASSEL_2 + ID_1 + MC_2  + TAIE + TACLR);	//SMCLK,div 2,Stop Mode, Interrupt Enable 33ms = 0xFFFF
 
 			TA1CCTL1 |= OUTMOD_3;						//Set/Reset
 			TA1CCTL2 |= OUTMOD_3;
 
 			TA1CCR0 |= MAX_DUTY_CYCLE;
+			TA1CCR1 |= MAX_DUTY_CYCLE/2;
+			TA1CCR2 |=TA1CCR1;
+			_ciocanLipit_Temperature = 260;
+			_ciocanLipit_TemperatureTemporar = _ciocanLipit_Temperature;
 			_ciocanLipit_State = init;
-
+			_ciocanLipit_Mode = temperatureMode;
 			break;
 		}
 		case(stop_statie1):
@@ -64,40 +75,78 @@ void ciocaneLipit(States state)
 		}
 		case(stop):
 		{
-			P3SEL 	&= ~(CIOCAN_PWM1 + CIOCAN_PWM1);
-			TA1CTL  &= ~MC_3;							//Stop Mode
-			P3OUT 	&= ~(CIOCAN_PWM1 + CIOCAN_PWM1);
+			P3SEL &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+			P3OUT &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
 			_ciocanLipit_State = stop;
-			//ShutDownDisplay
-			break;
-		}
-		case(start_statie1):
-		{
-			TA1CCR1 |= MIN_DUTY_CYCLE;
-			P3SEL 	|= CIOCAN_PWM1;
-			TA1CTL  |= MC_2 + TACLR;							//Continuous mode , reset
-			_ciocanLipit_State = start_statie1;
-			break;
-		}
-		case(start_statie2):
-		{
-			TA1CCR2 |= MIN_DUTY_CYCLE;
-			P3SEL 	|= CIOCAN_PWM2;
-			TA1CTL  |= MC_2 + TACLR;							//Continuous mode , reset
-			_ciocanLipit_State = start_statie2;
 			break;
 		}
 		case(start):
 		{
 			P3SEL 	|= CIOCAN_PWM1 + CIOCAN_PWM2;
-			TA1CTL  |= MC_2 + TACLR;							//Continuous mode , reset
-			TA1CCR1 |= MIN_DUTY_CYCLE;
 			_ciocanLipit_State = start;
 			break;
 		}
 	}
 }
-void ciocaneLipit_cyclic()
+void recalculatePWM()
 {
 
+}
+void newStateOcure()
+{
+	if ( (_ciocanLipit_ButtonValidate != (NrForValidateStates+1)) || (_ciocanLipit_EncoderValidate != (NrForValidateStates+1)) )
+	{
+		if (_ciocanLipit_ButtonValidate < NrForValidateStates) _ciocanLipit_ButtonValidate++;
+		else if (_ciocanLipit_ButtonValidate == NrForValidateStates)
+		{
+
+			if ( (_ciocanLipit_Mode_temporar == pwmMode) && (_ciocanLipit_Mode != _ciocanLipit_Mode_temporar) )
+			{
+			_ciocanLipit_ProcentageValue = 0;
+			P3SEL &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+			P3OUT &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
+			TA1CCR1 = MAX_DUTY_CYCLE;
+			TA1CCR2 = MAX_DUTY_CYCLE;
+			}
+			if ( (_ciocanLipit_Mode_temporar == temperatureMode) && (_ciocanLipit_Mode != _ciocanLipit_Mode_temporar) )
+			{
+			TA1CCR1 = 0xFFFF/2;
+			TA1CCR2 = 0xFFFF/2;
+			P3SEL |= (CIOCAN_PWM1 + CIOCAN_PWM2);
+			}
+			_ciocanLipit_Mode = _ciocanLipit_Mode_temporar;
+			_ciocanLipit_ButtonValidate++;
+		}
+
+		if (_ciocanLipit_EncoderValidate < NrForValidateStates) _ciocanLipit_EncoderValidate++;
+		else if (_ciocanLipit_EncoderValidate == NrForValidateStates)
+		{
+			//_ciocanLipit_Temperature = _ciocanLipit_TemperatureTemporar;
+			_ciocanLipit_EncoderValidate++;
+		}
+	}
+}
+uint16 readAdc(uint8 channel)
+{
+	uint8 i;
+	ADC10CTL0 &= ~ENC;						// Toggle enable in order to change the channel
+	switch (channel)
+	{
+	case CIOCAN_ADC1:
+		ADC10CTL1 = INCH_4;						// input A4 (CH4)
+		break;
+	case CIOCAN_ADC2:
+		ADC10CTL1 = INCH_5;						// input A5 (CH5)
+		break;
+	}
+
+	_ciocanLipit_ADC_Buffer = 0;
+	for (i=AVERAGE;i>0;i--)
+	{
+		ADC10CTL0 |= ENC + ADC10SC;  		// Sampling and conversion start
+		while (ADC10CTL1 & ADC10BUSY);    	// ADC10BUSY?
+		_ciocanLipit_ADC_Buffer += ADC10MEM;	  			// copy ADC result
+	}
+	_ciocanLipit_ADC_Buffer /= AVERAGE;
+	return _ciocanLipit_ADC_Buffer;
 }
