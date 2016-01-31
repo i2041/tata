@@ -17,14 +17,15 @@
 
 #define CIOCAN_PWM1 BIT2	//PORT 3 TIMER A1.1
 #define CIOCAN_PWM2 BIT3	//PORT 3 TIMER A1.2
-#define CIOCAN_ADC1 BIT4	//PORT 3 TIMER A1.1
-#define CIOCAN_ADC2 BIT5	//PORT 3 TIMER A1.2
+
+#define CIOCAN_ADC1 BIT4	//PORT 1
+#define CIOCAN_ADC2 BIT5	//PORT 1
 
 
 #define MAX_DUTY_CYCLE 0x583E	//FFFF=33ms, 7C1 = 1ms, F83E = 32ms
 #define MIN_DUTY_CYCLE 0x37C1
 
-#define AVERAGE  10
+#define AVERAGE  25
 
 void ciocaneLipit(States state);
 void recalculatePWM();

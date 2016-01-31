@@ -15,7 +15,7 @@ __interrupt void Timer_A1 (void)
 	 break;
 	 case 4:	// CCR2
 	 break;
-	 case 10: 	task33ms();// overflow ? reserved
+	 case 10: 	Flag33msOcured = true;// overflow ? reserved
 	 break;
 	 case 14: 	// overflow ?
 	 break;
@@ -139,7 +139,7 @@ __interrupt void USCI0TX_ISR(void)
 	if (IFG2 & UCB0TXIFG) {I2C_TX_Interrupt();IFG2 &= ~UCB0TXIFG;}
 	if (IFG2 & UCA0TXIFG) {Uart_TX_Interrupt();IFG2 &= ~UCA0TXIFG;}
 	if (IFG2 & UCA0RXIFG) {Uart_RX_Interrupt();IFG2 &= ~UCA0RXIFG;}
-	__bis_SR_register(GIE);        // interrupts
+	__enable_interrupt();//__bis_SR_register(GIE);        // interrupts
 }
 #pragma vector = USCIAB0RX_VECTOR
 __interrupt void USCIAB0RX_ISR(void)
@@ -151,6 +151,5 @@ __interrupt void USCIAB0RX_ISR(void)
 #pragma vector = ADC10_VECTOR
 __interrupt void ADC10_ISR(void)
 {
-
 	__enable_interrupt();
 }

@@ -12,10 +12,11 @@
 #include "interrupts.h"
 #include "TLC5947.h"
 #include "ads1115.h"
+
 void task33ms();
 void task100ms();
 void task500ms();
 void task1s();
-uint16 tmpValue;
+
 
 #endif /* LIBRARY_TASK_H_ */

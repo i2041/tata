@@ -14,24 +14,10 @@
 
 
 
-float tmpValue88;
-
-
-
-
-uint16 tmpValue22222;
-
-uint8 tmpCount = 0;
-bool buttonPressed=false;
-
-
 /*
  * main.c
  */
 int main(void) {
-	tmp1 = 111;
-	tmp2 = 111;
-	tmp3 = 111;
 
 	watchDogConfigure();
 	configureFrequency();
@@ -44,14 +30,15 @@ int main(void) {
 	V24(init);
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
-	_EINT();
+	__enable_interrupt();
 	while(1)
 	{
-		tmpValue22222 = readAdc(CIOCAN_ADC2);
-		print("ciocan1=%d",tmpValue22222);
+		if (Flag33msOcured)
+		{
+			task33ms();
+		}
 		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
 		//print("MLX90614=%f",10.2);
-		__delay_cycles(10000000);
 	}
 	return 0;
 }

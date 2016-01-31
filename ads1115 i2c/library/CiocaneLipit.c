@@ -39,10 +39,9 @@ void ciocaneLipit(States state)
 			P3SEL	&=~(CIOCAN_PWM1 + CIOCAN_PWM2);
 			P3SEL2	&=~(CIOCAN_PWM1 + CIOCAN_PWM2);
 			//ADC Configure ADC10
-			P1SEL |= CIOCAN_ADC1;						// ADC input pin P1.4
-			P1SEL |= CIOCAN_ADC2;						// ADC input pin P1.5
+			P1SEL |= (CIOCAN_ADC1 + CIOCAN_ADC2);						// ADC input pin P1.4 P1.5
 			ADC10CTL0 = SREF_1 + ADC10SHT_3 + REF2_5V + REFON + ADC10ON;				// no interrupt
-			ADC10AE0 |= CIOCAN_ADC1 + CIOCAN_ADC2;		// Port ADC option select
+			ADC10AE0 |= (CIOCAN_ADC1 + CIOCAN_ADC2);		// Port ADC option select
 
 			//TA1CTL  = (TASSEL_2 + ID_0 + MC_2  + TAIE);	//SMCLK,div 1,Stop Mode, Interrupt Enable 16.56ms = 0xFFFF
 			TA1CTL  = (TASSEL_2 + ID_1 + MC_2  + TAIE + TACLR);	//SMCLK,div 2,Stop Mode, Interrupt Enable 33ms = 0xFFFF
@@ -90,7 +89,9 @@ void ciocaneLipit(States state)
 }
 void recalculatePWM()
 {
-
+	uint16 tmpValue1 = readAdc(CIOCAN_ADC1);
+	uint16 tmpValue2 = readAdc(CIOCAN_ADC2);
+	print("%d,%d",tmpValue1,tmpValue2);
 }
 void newStateOcure()
 {
@@ -129,7 +130,9 @@ void newStateOcure()
 uint16 readAdc(uint8 channel)
 {
 	uint8 i;
+
 	ADC10CTL0 &= ~ENC;						// Toggle enable in order to change the channel
+
 	switch (channel)
 	{
 	case CIOCAN_ADC1:
@@ -141,9 +144,10 @@ uint16 readAdc(uint8 channel)
 	}
 
 	_ciocanLipit_ADC_Buffer = 0;
+
 	for (i=AVERAGE;i>0;i--)
 	{
-		ADC10CTL0 |= ENC + ADC10SC;  		// Sampling and conversion start
+		ADC10CTL0 |= (ENC + ADC10SC);  		// Sampling and conversion start
 		while (ADC10CTL1 & ADC10BUSY);    	// ADC10BUSY?
 		_ciocanLipit_ADC_Buffer += ADC10MEM;	  			// copy ADC result
 	}

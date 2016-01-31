@@ -8,9 +8,14 @@
 #ifndef ADS1115_H_
 #define ADS1115_H_
 #include "commontypes.h"
+
 #include <msp430.h>
 #include "i2c.h"
+
 #define ADS1115_ADRESS 0x49
+
+
+
 /*
 =========================================================OS: Operational status/single-shot conversion start
 This bit determines the operational status of the device.
@@ -167,6 +172,7 @@ typedef enum
 }POINTER_REGISTER;
 
 uint16 	ADS1115_ConversionRegister();
+int16 	ADS1115_ConversionRegisterGradeCelsius(MUX mux_pin);
 uint16 	ADS1115_Read_ConfigRegister();
 void 	ADS1115_Write_ConfigRegister(MUX mux_pin);
 
