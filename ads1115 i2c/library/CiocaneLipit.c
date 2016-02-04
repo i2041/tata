@@ -50,7 +50,7 @@ void ciocaneLipit(States state)
 			TA1CCTL2 |= OUTMOD_3;
 
 			TA1CCR0 |= MAX_DUTY_CYCLE;
-			TA1CCR1 |= MAX_DUTY_CYCLE/2;
+			TA1CCR1 |= MAX_DUTY_CYCLE-100;
 			TA1CCR2 |=TA1CCR1;
 			_ciocanLipit_Temperature = 260;
 			_ciocanLipit_TemperatureTemporar = _ciocanLipit_Temperature;
@@ -81,7 +81,7 @@ void ciocaneLipit(States state)
 		}
 		case(start):
 		{
-			P3SEL 	|= CIOCAN_PWM1 + CIOCAN_PWM2;
+			P3SEL 	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
 			_ciocanLipit_State = start;
 			break;
 		}
@@ -89,9 +89,50 @@ void ciocaneLipit(States state)
 }
 void recalculatePWM()
 {
-	uint16 tmpValue1 = readAdc(CIOCAN_ADC1);
-	uint16 tmpValue2 = readAdc(CIOCAN_ADC2);
-	print("%d,%d",tmpValue1,tmpValue2);
+			uint16 tip_temp_ADC1 = readAdc(CIOCAN_ADC1);
+			uint16 current_tip_temperature = 0;
+			static float i_Temp = 0;
+			static float d_Temp = 0;
+			int16 err_value;
+			float ADC_TO_Temperature1 = (9.712843528*tip_temp_ADC1*tip_temp_ADC1*tip_temp_ADC1)/100000000 - (2.361429586*tip_temp_ADC1*tip_temp_ADC1)/10000 + 0.7141578774*tip_temp_ADC1 + 1.586170803;
+			uint16 TA1CCRx_temporar;
+			float P_Term;
+			float I_Term;
+			float D_Term;
+			//float ADC_TO_Temperature2 = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
+			//from measurements we determined that the following linearization is necessary:
+			if (ADC_TO_Temperature1 < 310)
+			{
+				ADC_TO_Temperature1 = ADC_TO_Temperature1 * 0.68 + 21;
+			}
+			else
+			{
+				ADC_TO_Temperature1 = ADC_TO_Temperature1 * 0.88 -42;
+			}
+			current_tip_temperature = (uint16)ADC_TO_Temperature1;	// after calibration this seems more acurate
+
+			err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
+
+		P_Term = Kp * err_value;
+
+			i_Temp += err_value;
+			if (i_Temp > Max_acumulated_error) {i_Temp = Max_acumulated_error;}
+			else if (i_Temp < Min_acumulated_error) {i_Temp = Min_acumulated_error;}
+
+		I_Term = Ki * i_Temp;
+
+		D_Term = Kd * (d_Temp - err_value);
+			d_Temp = err_value;
+
+			TA1CCRx_temporar = TA1CCR1 - (P_Term + I_Term + D_Term);
+
+			if ( TA1CCRx_temporar > (MAX_DUTY_CYCLE-100) )
+			{TA1CCRx_temporar = (MAX_DUTY_CYCLE-100);}
+			else if ( TA1CCRx_temporar < (MIN_DUTY_CYCLE+100) )
+			{TA1CCRx_temporar = (MIN_DUTY_CYCLE+100);}
+
+			TA1CCR1 = TA1CCRx_temporar;
+			_ciocanLipit_Temperature = current_tip_temperature;
 }
 void newStateOcure()
 {
@@ -106,13 +147,13 @@ void newStateOcure()
 			_ciocanLipit_ProcentageValue = 0;
 			P3SEL &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
 			P3OUT &= ~(CIOCAN_PWM1 + CIOCAN_PWM2);
-			TA1CCR1 = MAX_DUTY_CYCLE;
-			TA1CCR2 = MAX_DUTY_CYCLE;
+			TA1CCR1 = MAX_DUTY_CYCLE-100;
+			TA1CCR2 = MAX_DUTY_CYCLE-100;
 			}
 			if ( (_ciocanLipit_Mode_temporar == temperatureMode) && (_ciocanLipit_Mode != _ciocanLipit_Mode_temporar) )
 			{
-			TA1CCR1 = 0xFFFF/2;
-			TA1CCR2 = 0xFFFF/2;
+			TA1CCR1 = MAX_DUTY_CYCLE-100;
+			TA1CCR2 = TA1CCR1;
 			P3SEL |= (CIOCAN_PWM1 + CIOCAN_PWM2);
 			}
 			_ciocanLipit_Mode = _ciocanLipit_Mode_temporar;
@@ -122,7 +163,7 @@ void newStateOcure()
 		if (_ciocanLipit_EncoderValidate < NrForValidateStates) _ciocanLipit_EncoderValidate++;
 		else if (_ciocanLipit_EncoderValidate == NrForValidateStates)
 		{
-			//_ciocanLipit_Temperature = _ciocanLipit_TemperatureTemporar;
+			_ciocanLipit_Temperature = _ciocanLipit_TemperatureTemporar;
 			_ciocanLipit_EncoderValidate++;
 		}
 	}
@@ -136,10 +177,10 @@ uint16 readAdc(uint8 channel)
 	switch (channel)
 	{
 	case CIOCAN_ADC1:
-		ADC10CTL1 = INCH_4;						// input A4 (CH4)
+		ADC10CTL1 = INCH_5;						// input A4 (CH4)
 		break;
 	case CIOCAN_ADC2:
-		ADC10CTL1 = INCH_5;						// input A5 (CH5)
+		ADC10CTL1 = INCH_4;						// input A5 (CH5)
 		break;
 	}
 

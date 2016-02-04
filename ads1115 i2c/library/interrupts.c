@@ -81,7 +81,7 @@ __interrupt void port2_isr(void) {
 			{
 				if ( _ciocanLipit_ProcentageValue > 1)
 				{
-					TA1CCR1 += (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE)/100; // +1%
+					TA1CCR1 += (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE - 100)/100; // -1%
 					TA1CCR2 = TA1CCR1;
 					P3SEL 	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
 					_ciocanLipit_ProcentageValue --;
@@ -108,7 +108,8 @@ __interrupt void port2_isr(void) {
 			{
 				if (_ciocanLipit_ProcentageValue < 99)
 				{
-					TA1CCR1 -= (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE)/100; // +1%
+					TA1CCR1 -= (MAX_DUTY_CYCLE - MIN_DUTY_CYCLE - 100)/100; // +1%
+//					if (TA1CCR1 < MIN_DUTY_CYCLE
 					TA1CCR2 = TA1CCR1;
 					P3SEL 	|= (CIOCAN_PWM1 + CIOCAN_PWM2);
 					_ciocanLipit_ProcentageValue ++;

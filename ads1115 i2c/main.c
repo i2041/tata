@@ -26,7 +26,7 @@ int main(void) {
 	Init_Uart();
 	V220(init);
 	ciocaneLipit(init);
-	//ciocaneLipit(start);
+	ciocaneLipit(start);
 	V24(init);
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
@@ -37,6 +37,12 @@ int main(void) {
 		{
 			task33ms();
 		}
+
+
+
+
+
+
 		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
 		//print("MLX90614=%f",10.2);
 	}
