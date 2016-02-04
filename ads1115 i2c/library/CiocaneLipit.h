@@ -22,8 +22,8 @@
 #define Min_acumulated_error    -200
 //=============================================
 
-#define CIOCAN_PWM1 BIT3	//PORT 3 TIMER A1.1
-#define CIOCAN_PWM2 BIT2	//PORT 3 TIMER A1.2
+#define CIOCAN_PWM1 BIT2	//PORT 3 TIMER A1.1
+#define CIOCAN_PWM2 BIT3	//PORT 3 TIMER A1.2
 
 #define CIOCAN_ADC1 BIT5	//PORT 1
 #define CIOCAN_ADC2 BIT4	//PORT 1

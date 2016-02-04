@@ -90,49 +90,116 @@ void ciocaneLipit(States state)
 void recalculatePWM()
 {
 			uint16 tip_temp_ADC1 = readAdc(CIOCAN_ADC1);
+			uint16 tip_temp_ADC2 = readAdc(CIOCAN_ADC2);
 			uint16 current_tip_temperature = 0;
 			static float i_Temp = 0;
 			static float d_Temp = 0;
+			static float i_Temp2 = 0;
+			static float d_Temp2 = 0;
+
 			int16 err_value;
-			float ADC_TO_Temperature1 = (9.712843528*tip_temp_ADC1*tip_temp_ADC1*tip_temp_ADC1)/100000000 - (2.361429586*tip_temp_ADC1*tip_temp_ADC1)/10000 + 0.7141578774*tip_temp_ADC1 + 1.586170803;
 			uint16 TA1CCRx_temporar;
 			float P_Term;
 			float I_Term;
 			float D_Term;
-			//float ADC_TO_Temperature2 = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
-			//from measurements we determined that the following linearization is necessary:
-			if (ADC_TO_Temperature1 < 310)
+			float ADC_TO_Temperature;
+			_ciocanLipit_Temperature = 0;
+			if (tip_temp_ADC1 != 1023)
 			{
-				ADC_TO_Temperature1 = ADC_TO_Temperature1 * 0.68 + 21;
+				P3SEL 	|= (CIOCAN_PWM1);
+				ADC_TO_Temperature = (9.712843528*tip_temp_ADC1*tip_temp_ADC1*tip_temp_ADC1)/100000000 - (2.361429586*tip_temp_ADC1*tip_temp_ADC1)/10000 + 0.7141578774*tip_temp_ADC1 + 1.586170803;
+				//float ADC_TO_Temperature2 = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
+				//from measurements we determined that the following linearization is necessary:
+				if (ADC_TO_Temperature < 310)
+				{
+					ADC_TO_Temperature = ADC_TO_Temperature * 0.68 + 21;
+				}
+				else
+				{
+					ADC_TO_Temperature = ADC_TO_Temperature * 0.88 -42;
+				}
+				current_tip_temperature = (uint16)ADC_TO_Temperature;	// after calibration this seems more acurate
+
+				err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
+
+			P_Term = Kp * err_value;
+
+				i_Temp += err_value;
+				if (i_Temp > Max_acumulated_error) {i_Temp = Max_acumulated_error;}
+				else if (i_Temp < Min_acumulated_error) {i_Temp = Min_acumulated_error;}
+
+			I_Term = Ki * i_Temp;
+
+			D_Term = Kd * (d_Temp - err_value);
+				d_Temp = err_value;
+
+				TA1CCRx_temporar = TA1CCR1 - (P_Term + I_Term + D_Term);
+
+				if ( TA1CCRx_temporar > (MAX_DUTY_CYCLE-100) )
+				{TA1CCRx_temporar = (MAX_DUTY_CYCLE-100);}
+				else if ( TA1CCRx_temporar < (MIN_DUTY_CYCLE+100) )
+				{TA1CCRx_temporar = (MIN_DUTY_CYCLE+100);}
+
+				TA1CCR1 = TA1CCRx_temporar;
+				_ciocanLipit_Temperature = current_tip_temperature;
+
+			}
+			//second iron
+			else
+			{/*iron1 is not connected*/
+				P3SEL 	&= ~(CIOCAN_PWM1);
+				P3OUT &= ~(CIOCAN_PWM1);
+				TA1CCR1 = (MAX_DUTY_CYCLE-100);
+			}
+			if (tip_temp_ADC2 != 1023)
+			{
+				P3SEL 	|= (CIOCAN_PWM2);
+				ADC_TO_Temperature = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
+
+				P_Term=0;
+				I_Term=0;
+				D_Term=0;
+				if (ADC_TO_Temperature < 310)
+				{
+					ADC_TO_Temperature = ADC_TO_Temperature * 0.68 + 21;
+				}
+				else
+				{
+					ADC_TO_Temperature = ADC_TO_Temperature * 0.88 -42;
+				}
+				current_tip_temperature = (uint16)ADC_TO_Temperature;	// after calibration this seems more acurate
+
+				err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
+
+			P_Term = Kp * err_value;
+
+				i_Temp2 += err_value;
+				if (i_Temp2 > Max_acumulated_error) {i_Temp2 = Max_acumulated_error;}
+				else if (i_Temp2 < Min_acumulated_error) {i_Temp2 = Min_acumulated_error;}
+
+			I_Term = Ki * i_Temp2;
+
+			D_Term = Kd * (d_Temp2 - err_value);
+				d_Temp2 = err_value;
+
+				TA1CCRx_temporar = TA1CCR2 - (P_Term + I_Term + D_Term);
+
+				if ( TA1CCRx_temporar > (MAX_DUTY_CYCLE-100) )
+				{TA1CCRx_temporar = (MAX_DUTY_CYCLE-100);}
+				else if ( TA1CCRx_temporar < (MIN_DUTY_CYCLE+100) )
+				{TA1CCRx_temporar = (MIN_DUTY_CYCLE+100);}
+
+				TA1CCR2 = TA1CCRx_temporar;
+
+				_ciocanLipit_Temperature += current_tip_temperature;
+				if (tip_temp_ADC1 != 1023)_ciocanLipit_Temperature /=2;//avg virful 1 si virful2
 			}
 			else
-			{
-				ADC_TO_Temperature1 = ADC_TO_Temperature1 * 0.88 -42;
+			{/*iron2 is not connected*/
+				P3SEL 	&= ~(CIOCAN_PWM2);
+				P3OUT &= ~(CIOCAN_PWM1);
+				TA1CCR2 = (MAX_DUTY_CYCLE-100);
 			}
-			current_tip_temperature = (uint16)ADC_TO_Temperature1;	// after calibration this seems more acurate
-
-			err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
-
-		P_Term = Kp * err_value;
-
-			i_Temp += err_value;
-			if (i_Temp > Max_acumulated_error) {i_Temp = Max_acumulated_error;}
-			else if (i_Temp < Min_acumulated_error) {i_Temp = Min_acumulated_error;}
-
-		I_Term = Ki * i_Temp;
-
-		D_Term = Kd * (d_Temp - err_value);
-			d_Temp = err_value;
-
-			TA1CCRx_temporar = TA1CCR1 - (P_Term + I_Term + D_Term);
-
-			if ( TA1CCRx_temporar > (MAX_DUTY_CYCLE-100) )
-			{TA1CCRx_temporar = (MAX_DUTY_CYCLE-100);}
-			else if ( TA1CCRx_temporar < (MIN_DUTY_CYCLE+100) )
-			{TA1CCRx_temporar = (MIN_DUTY_CYCLE+100);}
-
-			TA1CCR1 = TA1CCRx_temporar;
-			_ciocanLipit_Temperature = current_tip_temperature;
 }
 void newStateOcure()
 {
