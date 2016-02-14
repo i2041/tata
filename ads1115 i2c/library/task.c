@@ -7,6 +7,11 @@
 #include "task.h"
 void task100ms()
 {
+
+}
+
+void task500ms()
+{
 	uint16 tmpValue = (uint16)ADS1115_ConversionRegisterGradeCelsius(AIN0P_AIN1N);
 	tlc5947_calculate_digits(0,tmpValue);
 
@@ -18,7 +23,7 @@ void task100ms()
 		if ( (_ciocanLipit_Mode == temperatureMode) )
 		{
 			if (_ciocanLipit_EncoderValidate < NrForValidateStates) tlc5947_calculate_digits(2,_ciocanLipit_TemperatureTemporar);
-			else tlc5947_calculate_digits(2,_ciocanLipit_Temperature);
+			else tlc5947_calculate_digits(2,_ciocanLipit_Temperature_Average);
 		}
 		if ( (_ciocanLipit_Mode == pwmMode) )
 		{
@@ -32,14 +37,9 @@ void task100ms()
 	tlc5947_update_displays();
 }
 
-void task500ms()
-{
-
-}
-
 void task1s()
 {
-
+	if ( _220V_State == start ) V220_cyclic_recalculate_PWM();
 }
 
 void task33ms()
@@ -49,6 +49,10 @@ void task33ms()
 
 	if (_ciocanLipit_Mode == temperatureMode) recalculatePWM();
 	newStateOcure();
+
+	if (countTmpValue < temperature_220V_counter && _220V_State == start) P2OUT |= V220_PWM;
+	else if (countTmpValue >= temperature_220V_counter && _220V_State == start) P2OUT &=~V220_PWM;
+	if (_24V_State == start)
 
 	if ( countTmpValue %  3 == 0 ) 	{task100ms();}
 	if ( countTmpValue % 15 == 0 ) 	{task500ms();}

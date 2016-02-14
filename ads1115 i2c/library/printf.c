@@ -25,7 +25,7 @@ void print(uint8 *string, ... )
 	 {
 		 union Printable_t
 	 	 {
-		 uint16  i;
+		 int     i;
 		 float   f;
 		 char    c;
 		 char   *s;
@@ -36,8 +36,8 @@ void print(uint8 *string, ... )
 	 		 switch( string[i+1])
 	 		 {
 			 case 'd'://decimal
-				Printable.i = va_arg( vl, uint16 );
-				for (countIntegerNumber=1;( Printable.i / (10*powValue) ) != 0; countIntegerNumber++)
+				Printable.i = va_arg( vl, int );
+				for (countIntegerNumber=1;( (Printable.i/10) / powValue ) != 0; countIntegerNumber++)
 				{
 					powValue*=10;
 				}

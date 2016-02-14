@@ -52,8 +52,7 @@ void ciocaneLipit(States state)
 			TA1CCR0 |= MAX_DUTY_CYCLE;
 			TA1CCR1 |= MAX_DUTY_CYCLE-100;
 			TA1CCR2 |=TA1CCR1;
-			_ciocanLipit_Temperature = 260;
-			_ciocanLipit_TemperatureTemporar = _ciocanLipit_Temperature;
+			_ciocanLipit_TemperatureTemporar = 260;
 			_ciocanLipit_State = init;
 			_ciocanLipit_Mode = temperatureMode;
 			break;
@@ -91,19 +90,18 @@ void recalculatePWM()
 {
 			uint16 tip_temp_ADC1 = readAdc(CIOCAN_ADC1);
 			uint16 tip_temp_ADC2 = readAdc(CIOCAN_ADC2);
-			uint16 current_tip_temperature = 0;
 			static float i_Temp = 0;
 			static float d_Temp = 0;
 			static float i_Temp2 = 0;
 			static float d_Temp2 = 0;
-
 			int16 err_value;
 			uint16 TA1CCRx_temporar;
 			float P_Term;
 			float I_Term;
 			float D_Term;
 			float ADC_TO_Temperature;
-			_ciocanLipit_Temperature = 0;
+			uint16 current_tip_temperature=0;
+			_ciocanLipit_Temperature_Average = 0;
 			if (tip_temp_ADC1 != 1023)
 			{
 				P3SEL 	|= (CIOCAN_PWM1);
@@ -119,8 +117,8 @@ void recalculatePWM()
 					ADC_TO_Temperature = ADC_TO_Temperature * 0.88 -42;
 				}
 				current_tip_temperature = (uint16)ADC_TO_Temperature;	// after calibration this seems more acurate
-
-				err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
+				_ciocanLipit_Temperature_Average=current_tip_temperature;
+				err_value = (_ciocanLipit_Temperature - current_tip_temperature);
 
 			P_Term = Kp * err_value;
 
@@ -141,16 +139,14 @@ void recalculatePWM()
 				{TA1CCRx_temporar = (MIN_DUTY_CYCLE+100);}
 
 				TA1CCR1 = TA1CCRx_temporar;
-				_ciocanLipit_Temperature = current_tip_temperature;
-
 			}
-			//second iron
 			else
 			{/*iron1 is not connected*/
 				P3SEL 	&= ~(CIOCAN_PWM1);
 				P3OUT &= ~(CIOCAN_PWM1);
 				TA1CCR1 = (MAX_DUTY_CYCLE-100);
 			}
+			//second iron
 			if (tip_temp_ADC2 != 1023)
 			{
 				P3SEL 	|= (CIOCAN_PWM2);
@@ -169,7 +165,7 @@ void recalculatePWM()
 				}
 				current_tip_temperature = (uint16)ADC_TO_Temperature;	// after calibration this seems more acurate
 
-				err_value = (_ciocanLipit_TemperatureTemporar - current_tip_temperature);
+				err_value = (_ciocanLipit_Temperature - current_tip_temperature);
 
 			P_Term = Kp * err_value;
 
@@ -191,8 +187,8 @@ void recalculatePWM()
 
 				TA1CCR2 = TA1CCRx_temporar;
 
-				_ciocanLipit_Temperature += current_tip_temperature;
-				if (tip_temp_ADC1 != 1023)_ciocanLipit_Temperature /=2;//avg virful 1 si virful2
+				_ciocanLipit_Temperature_Average += current_tip_temperature;
+				if (tip_temp_ADC1 != 1023) _ciocanLipit_Temperature_Average /=2;//avg virful 1 si virful2
 			}
 			else
 			{/*iron2 is not connected*/
@@ -200,6 +196,7 @@ void recalculatePWM()
 				P3OUT &= ~(CIOCAN_PWM1);
 				TA1CCR2 = (MAX_DUTY_CYCLE-100);
 			}
+			print("%d,%d,%d,%d",_ciocanLipit_Temperature,current_tip_temperature,TA1CCR1,TA1CCR2);
 }
 void newStateOcure()
 {
@@ -222,6 +219,7 @@ void newStateOcure()
 			TA1CCR1 = MAX_DUTY_CYCLE-100;
 			TA1CCR2 = TA1CCR1;
 			P3SEL |= (CIOCAN_PWM1 + CIOCAN_PWM2);
+
 			}
 			_ciocanLipit_Mode = _ciocanLipit_Mode_temporar;
 			_ciocanLipit_ButtonValidate++;

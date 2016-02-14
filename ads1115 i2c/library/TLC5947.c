@@ -8,7 +8,7 @@
 void tlc5947_init()
 {
 	P3DIR |= _sin + _clk + _latch;
-	displayIntensity = 0x0FF ;	//max 0x0FFF
+	displayIntensity = 0x1FF ;	//max 0x0FFF
 }
 void tlc5947_Set_Intensity(uint8 displayintensity)
 {
