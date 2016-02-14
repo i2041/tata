@@ -21,15 +21,19 @@ void V24(States state)
 		P2IE 	|= (Encoder2_1 + Button2);					//Encoder2_2
 
 
-		P3SEL 	&=~V24_PWM;
-		P3SEL2 	&=~V24_PWM;
 		P3DIR 	|= V24_PWM;
 		P3OUT   &=~V24_PWM;
+		P3SEL 	&=~V24_PWM;
+		P3SEL2 	&=~V24_PWM;
+		TA0CCR0  = TA0CCR0_FREQUENCE;
+		TA0CTL   = (TASSEL_2 + ID_0 + MC_1 + TACLR);	//SMCLK,div 1,Up Mode, 16.5ms = 0xFFFF
+		TA0CCTL2 = OUTMOD_3;						//Set/Reset
 		_24V_State = init;
 		break;
 		}
 		case stop:
 		{
+		P3SEL 	&=~V24_PWM;
 		P3OUT   &=~V24_PWM;
 		V24_elementFromArray_write=0;
 		_24V_State = stop;
@@ -37,7 +41,8 @@ void V24(States state)
 		}
 		case start:
 		{
-		//P3OUT 	|= V24_PWM;
+		TA0CCR2 = TA0CCR0-100;
+		P3SEL 	|= V24_PWM;
 		V24_elementFromArray_read = 0;
 		V24_counterTime = 0;
 		_24V_State = start;
@@ -54,13 +59,35 @@ void V24V_recalculate_PWM()
 	float D_Term;
 	int16 err_value;
 	float tmpTemperature;
-	if ( V24_counterTime < V24_Time_array[V24_elementFromArray_read] )
+	int32 TA0CCRx_temporar;
+	if ( V24_elementFromArray_read <= V24_elementFromArray_write )
 	{
 		V24_temperature = Mlx90614_read_Register(MLX90614_TOBJ1);
 		if (V24_elementFromArray_read == 0 ) tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],temperature_220V_maximum,V24_Temperature_array[1]);
-		else tmpTemperature = map(,0,V24_Time_array[0],temperature_220V_maximum,V24_Temperature_array[1]);
-		err_value = (_ciocanLipit_Temperature - current_tip_temperature);
+		else tmpTemperature = map(V24_counterTime,V24_Time_array[V24_elementFromArray_read-1],V24_Time_array[V24_elementFromArray_read],temperature_220V_maximum,V24_Temperature_array[1]);
+		err_value = (V24_temperature - tmpTemperature);
+		P_Term = Kp_24V * err_value;
+
+			i_Temp += err_value;
+			if (i_Temp > Max_acumulated_error_24V) {i_Temp = Max_acumulated_error_24V;}
+			else if (i_Temp < Min_acumulated_error_24V) {i_Temp = Min_acumulated_error_24V;}
+
+		I_Term = Ki_24V * i_Temp;
+
+		D_Term = Kd_24V * (d_Temp - err_value);
+			d_Temp = err_value;
+
+			TA0CCRx_temporar = TA0CCR2 - (P_Term + I_Term + D_Term);
+
+			if ( TA0CCRx_temporar > (TA0CCR0_FREQUENCE-100) )
+			{TA0CCRx_temporar = (TA0CCR0_FREQUENCE-100);}
+			else if ( TA0CCRx_temporar < (0+100) )
+			{TA0CCRx_temporar = 0+100;}//(0+100)
+
+			TA0CCR2 = TA0CCRx_temporar;
+
 		V24_counterTime++;
+		if ( V24_counterTime > V24_Time_array[V24_elementFromArray_read] ) V24_elementFromArray_read++;
 	}
 	else V24(stop);
 }

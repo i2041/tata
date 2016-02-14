@@ -56,7 +56,7 @@ void V220_cyclic_recalculate_PWM()
 		float D_Term;
 
 		float err_value;
-		if (temperature_220V <= temperature_220V_maximum)
+		if (temperature_220V <= temperature_220V_maximum) //if (temperature_220V_steep <= temperature_220V_maximum) ?????????
 		{
 			temperature_220V = Mlx90614_read_Register(MLX90614_TOBJ1);
 

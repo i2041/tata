@@ -44,6 +44,7 @@ void configureFrequency()
   __interrupt void watchdog_timer(void)
 {
 	  //WatchDogTask();
+	  P3OUT ^= BIT6;
 }
 
 

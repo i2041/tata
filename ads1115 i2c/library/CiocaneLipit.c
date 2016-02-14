@@ -95,7 +95,7 @@ void recalculatePWM()
 			static float i_Temp2 = 0;
 			static float d_Temp2 = 0;
 			int16 err_value;
-			uint16 TA1CCRx_temporar;
+			int32 TA1CCRx_temporar;
 			float P_Term;
 			float I_Term;
 			float D_Term;
@@ -142,6 +142,8 @@ void recalculatePWM()
 			}
 			else
 			{/*iron1 is not connected*/
+				i_Temp = 0;
+				d_Temp = 0;
 				P3SEL 	&= ~(CIOCAN_PWM1);
 				P3OUT &= ~(CIOCAN_PWM1);
 				TA1CCR1 = (MAX_DUTY_CYCLE-100);
@@ -192,6 +194,8 @@ void recalculatePWM()
 			}
 			else
 			{/*iron2 is not connected*/
+				i_Temp2 = 0;
+				d_Temp2 = 0;
 				P3SEL 	&= ~(CIOCAN_PWM2);
 				P3OUT &= ~(CIOCAN_PWM1);
 				TA1CCR2 = (MAX_DUTY_CYCLE-100);

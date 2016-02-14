@@ -10,17 +10,28 @@
 
 #include <msp430.h>
 #include "commontypes.h"
-
+#include "mlx90614.h"
+#include "220V.h"
 #define Button2 	BIT2	//PORT 2
 #define Encoder2_1 	BIT0	//PORT 2
 #define Encoder2_2 	BIT1	//PORT 2
 
 #define V24_PWM 	BIT0	//PORT 3
+//======================PID_24V===============
+#define Kp_24V 					10.0
+#define Ki_24V 					0.01
+#define Kd_24V 					0.5
+#define Max_acumulated_error_24V	200
+#define Min_acumulated_error_24V  -200
+#define TA0CCR0_FREQUENCE 		0x7FFF	//16.5ms = 0xFFFF  result 0x7FFF = 8.238ms
+//=============================================
+
 
 void V24(States state);
 
 uint8 _24V_State;
 void V24V_recalculate_PWM();
+long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 uint16 	V24_Temperature_array[5];
 uint8 	V24_Time_array[5];
