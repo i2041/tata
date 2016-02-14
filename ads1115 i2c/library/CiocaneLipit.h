@@ -33,7 +33,7 @@
 #define MIN_DUTY_CYCLE 0x01FF
 
 #define AVERAGE  50
-
+#define _ciocanLipit_defaultTemperature 260
 void ciocaneLipit(States state);
 void recalculatePWM();
 void newStateOcure();
