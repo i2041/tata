@@ -29,8 +29,8 @@
 #define CIOCAN_ADC2 BIT4	//PORT 1
 
 
-#define MAX_DUTY_CYCLE 0xF83E	//FFFF=33ms, 7C1 = 1ms, F83E = 32ms
-#define MIN_DUTY_CYCLE 0x01FF
+#define MAX_DUTY_CYCLE 0xFFA0	//FFFF=33ms, 7C1 = 1ms, F83E = 32ms
+#define MIN_DUTY_CYCLE 0x0FFF	//AVG = 50 0xEF8, 25 - 0x799
 
 #define AVERAGE  50
 #define _ciocanLipit_defaultTemperature 260

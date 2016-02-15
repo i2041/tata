@@ -60,18 +60,18 @@ void ciocaneLipit(States state)
 			_ciocanLipit_Mode = temperatureMode;
 			break;
 		}
-		case(stop_statie1):
+		case(stop_statie2):
 		{
 			P3SEL &= ~CIOCAN_PWM1;
 			P3OUT &= ~CIOCAN_PWM1;
-			_ciocanLipit_State = stop_statie1;
+			_ciocanLipit_State = stop_statie2;
 			break;
 		}
-		case(stop_statie2):
+		case(stop_statie1):
 		{
 			P3SEL &= ~CIOCAN_PWM2;
 			P3OUT &= ~CIOCAN_PWM2;
-			_ciocanLipit_State = stop_statie2;
+			_ciocanLipit_State = stop_statie1;
 			break;
 		}
 		case(stop):
@@ -107,10 +107,10 @@ void recalculatePWM()
 			_ciocanLipit_Temperature_Average = 0;
 			if (tip_temp_ADC1 != 1023)
 			{
-				if ( _ciocanLipit_State == stop_statie1 ) 	{_ciocanLipit_State = start; 		P3SEL 	|= (CIOCAN_PWM1);}
-				else if ( _ciocanLipit_State == stop ) 		{_ciocanLipit_State = stop_statie2;	P3SEL 	|= (CIOCAN_PWM1);}
+				if ( _ciocanLipit_State == stop_statie2 ) 	{_ciocanLipit_State = start; 		P3SEL 	|= (CIOCAN_PWM1);}
+				else if ( _ciocanLipit_State == stop ) 		{_ciocanLipit_State = stop_statie1;	P3SEL 	|= (CIOCAN_PWM1);}
 				else{}//nothing because I am in start mode
-
+				//P3SEL 	|= (CIOCAN_PWM1);
 				ADC_TO_Temperature = (9.712843528*tip_temp_ADC1*tip_temp_ADC1*tip_temp_ADC1)/100000000 - (2.361429586*tip_temp_ADC1*tip_temp_ADC1)/10000 + 0.7141578774*tip_temp_ADC1 + 1.586170803;
 				//float ADC_TO_Temperature2 = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
 				//from measurements we determined that the following linearization is necessary:
@@ -150,17 +150,19 @@ void recalculatePWM()
 			{/*iron1 is not connected*/
 				i_Temp = 0;
 				d_Temp = 0;
-				if (_ciocanLipit_State == stop_statie2) ciocaneLipit (stop);
-				else ciocaneLipit (stop_statie1);
+				if (_ciocanLipit_State == stop_statie1) ciocaneLipit (stop);
+				else if (_ciocanLipit_State != stop) ciocaneLipit (stop_statie2);
+				//P3SEL 	&= ~(CIOCAN_PWM1);
 				TA1CCR1 = (MAX_DUTY_CYCLE-100);
 			}
+			//print("%d,%d,%d\t",_ciocanLipit_Temperature,current_tip_temperature,TA1CCR1);
 			//second iron
 			if (tip_temp_ADC2 != 1023)
 			{
-				if ( _ciocanLipit_State == stop_statie2 ) 	{_ciocanLipit_State = start; 		P3SEL 	|= (CIOCAN_PWM2);}
-				else if ( _ciocanLipit_State == stop ) 		{_ciocanLipit_State = stop_statie1;	P3SEL 	|= (CIOCAN_PWM2);}
+				if ( _ciocanLipit_State == stop_statie1 ) 	{_ciocanLipit_State = start; 		P3SEL 	|= (CIOCAN_PWM2);}
+				else if ( _ciocanLipit_State == stop ) 		{_ciocanLipit_State = stop_statie2;	P3SEL 	|= (CIOCAN_PWM2);}
 				else{}//nothing because I am in start mode
-
+				//P3SEL 	|= (CIOCAN_PWM2);
 				ADC_TO_Temperature = (9.712843528*tip_temp_ADC2*tip_temp_ADC2*tip_temp_ADC2)/100000000 - (2.361429586*tip_temp_ADC2*tip_temp_ADC2)/10000 + 0.7141578774*tip_temp_ADC2 + 1.586170803;
 
 				P_Term=0;
@@ -205,11 +207,16 @@ void recalculatePWM()
 			{/*iron2 is not connected*/
 				i_Temp2 = 0;
 				d_Temp2 = 0;
-				if (_ciocanLipit_State == stop_statie1) ciocaneLipit (stop);
-				else ciocaneLipit (stop_statie2);
+				if (_ciocanLipit_State == stop_statie2) ciocaneLipit (stop);
+				else if (_ciocanLipit_State != stop) ciocaneLipit (stop_statie1);
+				//P3SEL 	&= ~(CIOCAN_PWM2);
 				TA1CCR2 = (MAX_DUTY_CYCLE-100);
 			}
-			print("%d,%d,%d,%d",_ciocanLipit_Temperature,current_tip_temperature,TA1CCR1,TA1CCR2);
+		//	if (_ciocanLipit_State == stop_statie1) print("stop_statie1\n");
+		//	else if (_ciocanLipit_State == stop_statie2) print("stop_statie2\n");
+		//	else if (_ciocanLipit_State == stop) print("stop\n");
+		//	else print("start\n");
+		//  print("%d,%d,%d,%d\n",_ciocanLipit_Temperature,_ciocanLipit_Temperature_Average,TA1CCR1,TA1CCR2);
 }
 void newStateOcure()
 {

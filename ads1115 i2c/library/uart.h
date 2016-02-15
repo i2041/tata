@@ -14,10 +14,11 @@
 #define TXD BIT2
 #define SizeOfBuffer 50
 uint8 TxBuffer_Uart[SizeOfBuffer];
-uint8 TxBuffer_Uart_length;
+uint8 TxBuffer_Uart_Head;
+uint8 TxBuffer_Uart_Tail;
 uint8 RxBuffer_Uart[SizeOfBuffer];
 void Init_Uart();
 void Uart_RX_Interrupt();
 void Uart_TX_Interrupt();
-void Uart_send(uint8 size);
+void Uart_RecalculateTail_Buffer();
 #endif /* UART_H_ */

@@ -27,11 +27,14 @@ void Init_Uart()
 	IFG2 &= ~UCA0RXIFG;
 	UC0IE |= UCA0RXIE; // Enable USCI_A0 RX interrupt
 	UC0IE |= UCA0TXIE; // Enable USCI_A0 RX interrupt
+	TxBuffer_Uart_Head = 0;
+	TxBuffer_Uart_Tail = 0;
 }
-void Uart_send(uint8 size)
+void Uart_RecalculateTail_Buffer()
 {
-	TxBuffer_Uart_length = size;
-	UCA0TXBUF = TxBuffer_Uart[0]; //send first element to provoke interrupt
+	TxBuffer_Uart_Tail++;
+	if (TxBuffer_Uart_Tail == (SizeOfBuffer) ) TxBuffer_Uart_Tail=0;//in case if TxBuffer_Uart_Tail is uint8 need to remove this line
+	else if (TxBuffer_Uart_Tail == TxBuffer_Uart_Head) {}//overflow
 }
 void Uart_command(uint8 NrOfElements)
 {
@@ -44,12 +47,12 @@ void Uart_RX_Interrupt(void)
 
 	if ( count == SizeOfBuffer )
 	{
-		for (i=0; i < SizeOfBuffer;i++)
+		for (i=0; i < (SizeOfBuffer-1);i++)//need to test
 		{
 			RxBuffer_Uart[i] = RxBuffer_Uart[i++];
 		}
-		RxBuffer_Uart[count] = UCA0RXBUF;
-		if (RxBuffer_Uart[count] == 10)	//new line
+		RxBuffer_Uart[count-1] = UCA0RXBUF;
+		if (RxBuffer_Uart[count-1] == 10)	//new line
 		{
 			Uart_command(count);
 			count=0;
@@ -68,14 +71,10 @@ void Uart_RX_Interrupt(void)
 }
 void Uart_TX_Interrupt(void)
 {
-	static uint8 count = 1;
-	if ( count >= TxBuffer_Uart_length) // TX over?
-    {
-		count=1;
-    }
-	else
+	if ( TxBuffer_Uart_Head != TxBuffer_Uart_Tail) // TX over?
 	{
-		UCA0TXBUF = TxBuffer_Uart[count];	//send next byte
-		count++;
+		UCA0TXBUF = TxBuffer_Uart[TxBuffer_Uart_Head];	//send next byte
+		if (TxBuffer_Uart_Head == (SizeOfBuffer-1) ) TxBuffer_Uart_Head = 0;
+		else TxBuffer_Uart_Head++;
 	}
 }

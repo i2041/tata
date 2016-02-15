@@ -41,7 +41,7 @@ int main(void) {
 
 		}
 		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
-		//print("MLX90614=%f",10.2);
+		//print("MLX90614=%f\n",10.2);
 	}
 	return 0;
 }
