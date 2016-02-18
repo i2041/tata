@@ -38,7 +38,6 @@ int main(void) {
 		if (Flag33msOcured)
 		{
 			task33ms();
-
 		}
 		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
 		//print("MLX90614=%f\n",10.2);

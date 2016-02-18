@@ -28,6 +28,19 @@ void V24(States state)
 		TA0CCR0  = TA0CCR0_FREQUENCE;
 		TA0CTL   = (TASSEL_2 + ID_0 + MC_1 + TACLR);	//SMCLK,div 1,Up Mode, 16.5ms = 0xFFFF
 		TA0CCTL2 = OUTMOD_3;						//Set/Reset
+
+		V24_elementFromArray_write = 0;
+		while ( V24_elementFromArray_write < V24_ARRAY_ELEMENTS )
+		{
+			V24_Time_array[V24_elementFromArray_write] = 0;
+			V24_Temperature_array[V24_elementFromArray_write] = 0;
+			V24_elementFromArray_write++;
+		}
+		V24_elementFromArray_write = 0;
+		V24_Temperature_array[V24_elementFromArray_write] = V24_DEFAULT_TEMPERATURE;
+
+
+		V24_TimeSet = true;
 		_24V_State = init;
 		break;
 		}
@@ -35,7 +48,16 @@ void V24(States state)
 		{
 		P3SEL 	&=~V24_PWM;
 		P3OUT   &=~V24_PWM;
-		V24_elementFromArray_write=0;
+		V24_elementFromArray_write = 0;
+		while ( V24_elementFromArray_write < V24_ARRAY_ELEMENTS )
+		{
+			V24_Time_array[V24_elementFromArray_write] = 0;
+			V24_Temperature_array[V24_elementFromArray_write] = 0;
+			V24_elementFromArray_write++;
+		}
+		V24_elementFromArray_write = 0;
+		V24_Temperature_array[V24_elementFromArray_write] = V24_DEFAULT_TEMPERATURE;
+		V24_TimeSet = true;
 		_24V_State = stop;
 		break;
 		}
@@ -44,7 +66,7 @@ void V24(States state)
 		TA0CCR2 = TA0CCR0-100;
 		P3SEL 	|= V24_PWM;
 		V24_elementFromArray_read = 0;
-		V24_counterTime = 0;
+		V24_counterTime = 0.99;
 		_24V_State = start;
 		break;
 		}
@@ -60,11 +82,13 @@ void V24V_recalculate_PWM()
 	int16 err_value;
 	float tmpTemperature;
 	int32 TA0CCRx_temporar;
-	if ( V24_elementFromArray_read <= V24_elementFromArray_write )
+	if ( V24_elementFromArray_read < V24_elementFromArray_write && (uint8)V24_counterTime <= V24_Time_array[V24_elementFromArray_write-1])
 	{
-		V24_temperature = Mlx90614_read_Register(MLX90614_TOBJ1);
-		if (V24_elementFromArray_read == 0 ) tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],temperature_220V_maximum,V24_Temperature_array[1]);
-		else tmpTemperature = map(V24_counterTime,V24_Time_array[V24_elementFromArray_read-1],V24_Time_array[V24_elementFromArray_read],temperature_220V_maximum,V24_Temperature_array[1]);
+		V24_temperature = 111;//Mlx90614_read_Register(MLX90614_TOBJ1);
+
+		if (V24_elementFromArray_read == 0 )tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],V24_DEFAULT_TEMPERATURE,V24_Temperature_array[0]);
+		else tmpTemperature = map(V24_counterTime,V24_Time_array[V24_elementFromArray_read-1],V24_Time_array[V24_elementFromArray_read],V24_Temperature_array[V24_elementFromArray_read-1],V24_Temperature_array[V24_elementFromArray_read]);
+
 		err_value = (V24_temperature - tmpTemperature);
 		P_Term = Kp_24V * err_value;
 
@@ -77,7 +101,7 @@ void V24V_recalculate_PWM()
 		D_Term = Kd_24V * (d_Temp - err_value);
 			d_Temp = err_value;
 
-			TA0CCRx_temporar = TA0CCR2 - (P_Term + I_Term + D_Term);
+			TA0CCRx_temporar = TA0CCR2 + (P_Term + I_Term + D_Term);
 
 			if ( TA0CCRx_temporar > (TA0CCR0_FREQUENCE-100) )
 			{TA0CCRx_temporar = (TA0CCR0_FREQUENCE-100);}
@@ -86,8 +110,11 @@ void V24V_recalculate_PWM()
 
 			TA0CCR2 = TA0CCRx_temporar;
 
-		V24_counterTime++;
-		if ( V24_counterTime > V24_Time_array[V24_elementFromArray_read] ) V24_elementFromArray_read++;
+		print("%f,%f,%d,%d\n",V24_counterTime,tmpTemperature,V24_temperature,TA0CCR2);
+
+		if ( (uint8)V24_counterTime >= V24_Time_array[V24_elementFromArray_read] ) {V24_elementFromArray_read++;}
+
+		V24_counterTime+=0.033;
 	}
 	else V24(stop);
 }

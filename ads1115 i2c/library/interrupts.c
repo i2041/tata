@@ -46,27 +46,44 @@ __interrupt void port1_isr(void)
 }
 
 #pragma vector = PORT2_VECTOR
-__interrupt void port2_isr(void) {
+__interrupt void port2_isr(void)
+{
 
 	if (P2IFG & BIT0)	//encoder 2.1
 	{
 		P2IFG &= ~ BIT0;
-		if (P2IN & BIT1)
+		if ( _24V_State != start )
 		{
-			tmp2 -= 1;
-			if ( (TA0CCR2+1000) < (TA0CCR0_FREQUENCE-1000) ) TA0CCR2+=1000;
-		}
-		else
-		{
-			tmp2 += 1;
-			if ( (TA0CCR2-1000) > (1000) ) TA0CCR2-=1000;
+			if (P2IN & BIT1)
+			{
+				if (V24_TimeSet == true)  V24_Time_array[V24_elementFromArray_write]--;
+				else V24_Temperature_array[V24_elementFromArray_write]--;
+			}
+			else
+			{
+				if (V24_TimeSet == true)  V24_Time_array[V24_elementFromArray_write]++;
+				else V24_Temperature_array[V24_elementFromArray_write]++;
+			}
 		}
 	}
 	if (P2IFG & BIT2)	//button2
 	{
 		P2IFG &= ~ BIT2;
-		if ( _24V_State == start ) V24(stop);
-		else V24(start);
+		if ( _24V_State != start )
+		{
+			if ( !(P2IN & BIT5) ) V24(start);
+			else if ( V24_TimeSet == true && V24_Time_array[V24_elementFromArray_write] !=0 ) V24_TimeSet = false;
+			else if ( V24_TimeSet == false )
+			{
+				V24_elementFromArray_write++;
+				V24_Temperature_array[V24_elementFromArray_write] = V24_Temperature_array[V24_elementFromArray_write-1];
+				V24_TimeSet = true;
+			}
+		}
+		else
+		{
+			if (!(P2IN & BIT5)) V24(stop);
+		}
 		//P3OUT ^= BIT0;
 	}
 	if (P2IFG & BIT3)	//encoder 1.1

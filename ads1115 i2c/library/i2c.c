@@ -44,13 +44,15 @@ void Start_I2C_Transmition(uint8 size, I2C_STATE withstop)
 }
 void Start_I2C_Reception(uint8 size)
 {
+	uint8 exitReturnValue=0xFF;
 	length = size;
 	while (isBusy);
 	isBusy = true;
-	while (UCB0CTL1 & UCTXSTP);             // Ensure stop condition got sent
+	while (UCB0CTL1 & UCTXSTP && exitReturnValue--);             // Ensure stop condition got sent
 	UCB0CTL1 &= ~UCTR ;                     // Clear UCTR
 	UCB0CTL1 |= UCTXSTT;                    // I2C start condition
-	while (UCB0CTL1 & UCTXSTT);             // Start condition sent?
+	exitReturnValue=0xFF;
+	while (UCB0CTL1 & UCTXSTT && exitReturnValue--);             // Start condition sent?
 	if (length == 1) UCB0CTL1 |= UCTXSTP;   //only 1 byte send imediatly stop condition
 	while (isBusy);
 }

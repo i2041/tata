@@ -15,8 +15,12 @@ void task500ms()
 	uint16 tmpValue = (uint16)ADS1115_ConversionRegisterGradeCelsius(AIN0P_AIN1N);
 	tlc5947_calculate_digits(0,tmpValue);
 
-	tlc5947_calculate_digits(1,tmp2);
-
+	if ( _24V_State != start )
+	{
+		if (V24_TimeSet == true)  tlc5947_calculate_digits(1,V24_Time_array[V24_elementFromArray_write]);
+		else tlc5947_calculate_digits(1,V24_Temperature_array[V24_elementFromArray_write]);
+	}
+	else tlc5947_calculate_digits(1,555);//tlc5947_calculate_digits(1,Mlx90614_read_Register(MLX90614_TOBJ1));
 	//update display for ciocan de lipit
 	if ( (_ciocanLipit_ButtonValidate == (NrForValidateStates+1)) )
 	{
@@ -39,7 +43,11 @@ void task500ms()
 
 void task1s()
 {
-	if ( _220V_State == start ) V220_cyclic_recalculate_PWM();
+//	if (_24V_State == start)
+//	{
+//	V24V_recalculate_PWM();
+//	V24_counterTime++;
+//	}
 }
 
 void task33ms()
@@ -52,7 +60,11 @@ void task33ms()
 
 	if (countTmpValue < temperature_220V_counter && _220V_State == start) P2OUT |= V220_PWM;
 	else if (countTmpValue >= temperature_220V_counter && _220V_State == start) P2OUT &=~V220_PWM;
+
 	if (_24V_State == start)
+	{
+		V24V_recalculate_PWM();
+	}
 
 	if ( countTmpValue %  3 == 0 ) 	{task100ms();}
 	if ( countTmpValue % 15 == 0 ) 	{task500ms();}
