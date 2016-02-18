@@ -56,7 +56,17 @@ __interrupt void port2_isr(void)
 		{
 			if (P2IN & BIT1)
 			{
-				if (V24_TimeSet == true)  V24_Time_array[V24_elementFromArray_write]--;
+				if (V24_TimeSet == true )
+					{
+						if ( V24_elementFromArray_write == 0) 	//do not allow decrement in case if element is zero
+							{
+								if ( V24_Time_array[V24_elementFromArray_write] > 0 ) V24_Time_array[V24_elementFromArray_write]--;
+							}
+						else 									//do not allow decrement time for other elements
+							{
+								if ( V24_Time_array[V24_elementFromArray_write] > V24_Time_array[V24_elementFromArray_write-1] )V24_Time_array[V24_elementFromArray_write]--;
+							}
+					}
 				else V24_Temperature_array[V24_elementFromArray_write]--;
 			}
 			else
@@ -72,7 +82,19 @@ __interrupt void port2_isr(void)
 		if ( _24V_State != start )
 		{
 			if ( !(P2IN & BIT5) ) V24(start);
-			else if ( V24_TimeSet == true && V24_Time_array[V24_elementFromArray_write] !=0 ) V24_TimeSet = false;
+			else if ( V24_TimeSet == true && V24_Time_array[V24_elementFromArray_write] !=0 )
+				{
+					if ( V24_elementFromArray_write == 0 )
+					{
+						V24_TimeSet = false;
+						V24_Time_array[V24_elementFromArray_write+1] = V24_Time_array[V24_elementFromArray_write];
+					}
+					else if ( V24_Time_array[V24_elementFromArray_write] != V24_Time_array[V24_elementFromArray_write-1] )
+					{
+						V24_TimeSet = false;
+						if (V24_elementFromArray_write < (V24_ARRAY_ELEMENTS-1) ) V24_Time_array[V24_elementFromArray_write+1] = V24_Time_array[V24_elementFromArray_write];
+					}
+				}
 			else if ( V24_TimeSet == false )
 			{
 				V24_elementFromArray_write++;
@@ -89,13 +111,18 @@ __interrupt void port2_isr(void)
 	if (P2IFG & BIT3)	//encoder 1.1
 	{
 		P2IFG &= ~ BIT3;
-		if (P2IN & BIT4) tmp1 -= 1;
-		else tmp1 += 1;
+		if ( _220V_State != start )
+		{
+			if (P2IN & BIT4) temperature_220V_maximum -= 1;
+			else temperature_220V_maximum += 1;
+		}
 	}
 	if (P2IFG & BIT5)	//button1
 	{
 		P2IFG &= ~ BIT5;
-		P3OUT   ^= V220_PWM;
+		//P3OUT   ^= V220_PWM;
+		if ( _220V_State == start ) V220(stop);
+		else V220(start);
 	}
 	if (P2IFG & BIT6)	//encoder 3.1
 	{

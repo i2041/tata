@@ -18,9 +18,9 @@
 #define Encoder1_2 BIT4	//PORT 2
 #define DEFAULT_TEMPERATURE_STEEP 1.8
 #define V220_PWM BIT1	//PORT 3
-
+#define DEFAULT_220V_TEMPERATURE_MAXIMUM 180
 //======================PID_220V===============
-#define Kp_220V 					10.0
+#define Kp_220V 					0.1
 #define Ki_220V 					0.01
 #define Kd_220V 					0.5
 #define Max_acumulated_error_220V	200
@@ -34,8 +34,8 @@ void V220_cyclic_recalculate_PWM();
 uint8 _220V_State;
 float temperature_220V_steep;
 uint8 temperature_220V_maximum;
-int16 temperature_220V_counter;
+int16 temperature_220V_counter;//se poate de pus si un int8
 uint8 temperature_220V;
-
+float temperature_220V_required;
 
 #endif /* LIBRARY_220V_H_ */

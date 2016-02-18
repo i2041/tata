@@ -27,20 +27,24 @@ void V220(States state)
 		P3DIR 	|= V220_PWM;
 		P3OUT   &=~V220_PWM;
 		temperature_220V_counter = 0;
+		temperature_220V_maximum = DEFAULT_220V_TEMPERATURE_MAXIMUM;
+		temperature_220V_steep = DEFAULT_TEMPERATURE_STEEP;
 		_220V_State = init;
 		break;
 		}
 		case stop:
 		{
 		P2OUT   &=~V220_PWM;
+		temperature_220V_maximum = DEFAULT_220V_TEMPERATURE_MAXIMUM;
 		_220V_State = stop;
 		break;
 		}
 		case start:
 		{
 		//P2OUT 	|= V220_PWM;
+		temperature_220V = 100;//need to remove only for simulate temperature
 		temperature_220V_counter = 0;
-		temperature_220V_steep = Mlx90614_read_Register(MLX90614_TOBJ1);
+		temperature_220V_required = 22;//Mlx90614_read_Register(MLX90614_TOBJ1);
 		_220V_State = start;
 		break;
 		}
@@ -58,11 +62,11 @@ void V220_cyclic_recalculate_PWM()
 		float err_value;
 		if (temperature_220V <= temperature_220V_maximum) //if (temperature_220V_steep <= temperature_220V_maximum) ?????????
 		{
-			temperature_220V = Mlx90614_read_Register(MLX90614_TOBJ1);
+			temperature_220V += 2;//Mlx90614_read_Register(MLX90614_TOBJ1);
 
-			temperature_220V_steep += temperature_220V_steep;	//increment steep by steep temperature
+			temperature_220V_required += temperature_220V_steep;	//increment steep by steep temperature
 
-			err_value = (temperature_220V_steep - temperature_220V);
+			err_value = (temperature_220V_required - temperature_220V);
 		P_Term = Kp_220V * err_value;
 
 			i_Temp += err_value;
@@ -84,4 +88,5 @@ void V220_cyclic_recalculate_PWM()
 			V220 (stop);
 			V24  (start);
 		}
+		print("%f,%d\n",temperature_220V_required,temperature_220V_counter);
 }

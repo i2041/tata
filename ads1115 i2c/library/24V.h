@@ -34,7 +34,7 @@ void V24(States state);
 
 uint8 _24V_State;
 void V24V_recalculate_PWM();
-long map(long x, long in_min, long in_max, long out_min, long out_max);
+float map(float x, float in_min, float in_max, float out_min, float out_max);
 
 uint8 	V24_Time_array[V24_ARRAY_ELEMENTS];
 uint16 	V24_Temperature_array[V24_ARRAY_ELEMENTS];

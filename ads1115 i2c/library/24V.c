@@ -84,9 +84,9 @@ void V24V_recalculate_PWM()
 	int32 TA0CCRx_temporar;
 	if ( V24_elementFromArray_read < V24_elementFromArray_write && (uint8)V24_counterTime <= V24_Time_array[V24_elementFromArray_write-1])
 	{
-		V24_temperature = 111;//Mlx90614_read_Register(MLX90614_TOBJ1);
+		V24_temperature = 222;//Mlx90614_read_Register(MLX90614_TOBJ1);
 
-		if (V24_elementFromArray_read == 0 )tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],V24_DEFAULT_TEMPERATURE,V24_Temperature_array[0]);
+		if (V24_elementFromArray_read == 0 )tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],V24_DEFAULT_TEMPERATURE,(float)V24_Temperature_array[0]);
 		else tmpTemperature = map(V24_counterTime,V24_Time_array[V24_elementFromArray_read-1],V24_Time_array[V24_elementFromArray_read],V24_Temperature_array[V24_elementFromArray_read-1],V24_Temperature_array[V24_elementFromArray_read]);
 
 		err_value = (V24_temperature - tmpTemperature);
@@ -114,11 +114,11 @@ void V24V_recalculate_PWM()
 
 		if ( (uint8)V24_counterTime >= V24_Time_array[V24_elementFromArray_read] ) {V24_elementFromArray_read++;}
 
-		V24_counterTime+=0.033;
+		V24_counterTime+=0.032;
 	}
 	else V24(stop);
 }
-long map(long x, long in_min, long in_max, long out_min, long out_max)
+float map(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

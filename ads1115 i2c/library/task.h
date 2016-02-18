@@ -12,6 +12,8 @@
 #include "interrupts.h"
 #include "TLC5947.h"
 #include "ads1115.h"
+#include "220V.h"
+#include "24V.h"
 
 void task33ms();
 void task100ms();
