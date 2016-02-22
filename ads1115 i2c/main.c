@@ -32,15 +32,12 @@ int main(void) {
 	//ADS1115_Write_ConfigRegister(AIN0P_GND);
 	//tmpValue = ADS1115_Read_ConfigRegister();
 	__enable_interrupt();
-	P3DIR |= BIT6;
 	while(loop)
 	{
 		if (Flag33msOcured)
 		{
 			task33ms();
 		}
-		//tmpValue88 = Mlx90614_read_Register(MLX90614_TOBJ1);
-		//print("MLX90614=%f\n",10.2);
 	}
 	return 0;
 }

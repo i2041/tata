@@ -21,9 +21,9 @@
 #define V24_DEFAULT_TEMPERATURE 180
 #define V24_ARRAY_ELEMENTS 5
 //======================PID_24V===============
-#define Kp_24V 					10.0
+#define Kp_24V 					1
 #define Ki_24V 					0.01
-#define Kd_24V 					0.5
+#define Kd_24V 					0.05
 #define Max_acumulated_error_24V	200
 #define Min_acumulated_error_24V  -200
 #define TA0CCR0_FREQUENCE 		0x7FFF	//16.5ms = 0xFFFF  result 0x7FFF = 8.238ms
@@ -41,7 +41,7 @@ uint16 	V24_Temperature_array[V24_ARRAY_ELEMENTS];
 bool 	V24_TimeSet;
 uint8   V24_elementFromArray_write;
 uint8   V24_elementFromArray_read;
-uint16  V24_temperature;
+float  V24_temperature;
 float  V24_counterTime;
 
 #endif /* 24V_H_ */

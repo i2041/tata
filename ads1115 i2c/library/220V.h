@@ -35,7 +35,7 @@ uint8 _220V_State;
 float temperature_220V_steep;
 uint8 temperature_220V_maximum;
 int16 temperature_220V_counter;//se poate de pus si un int8
-uint8 temperature_220V;
+float temperature_220V;
 float temperature_220V_required;
 
 #endif /* LIBRARY_220V_H_ */

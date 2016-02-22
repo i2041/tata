@@ -212,6 +212,7 @@ void recalculatePWM()
 				//P3SEL 	&= ~(CIOCAN_PWM2);
 				TA1CCR2 = (MAX_DUTY_CYCLE-100);
 			}
+		//	print("%d,%d\n",tip_temp_ADC1,tip_temp_ADC2);
 		//	if (_ciocanLipit_State == stop_statie1) print("stop_statie1\n");
 		//	else if (_ciocanLipit_State == stop_statie2) print("stop_statie2\n");
 		//	else if (_ciocanLipit_State == stop) print("stop\n");

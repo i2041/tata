@@ -61,8 +61,11 @@ void task33ms()
 	if (_ciocanLipit_Mode == temperatureMode) recalculatePWM();
 	newStateOcure();
 
-	if (countTmpValue < temperature_220V_counter && _220V_State == start) P2OUT |= V220_PWM;
-	else if (countTmpValue >= temperature_220V_counter && _220V_State == start) P2OUT &=~V220_PWM;
+	if (_220V_State == start)
+	{
+		if ( countTmpValue <= temperature_220V_counter ) P3OUT |= V220_PWM;
+		else P3OUT &= ~V220_PWM;
+	}
 
 	if (_24V_State == start)
 	{

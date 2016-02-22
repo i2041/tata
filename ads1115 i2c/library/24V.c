@@ -84,8 +84,7 @@ void V24V_recalculate_PWM()
 	int32 TA0CCRx_temporar;
 	if ( V24_elementFromArray_read < V24_elementFromArray_write && (uint8)V24_counterTime <= V24_Time_array[V24_elementFromArray_write-1])
 	{
-		V24_temperature = 222;//Mlx90614_read_Register(MLX90614_TOBJ1);
-
+		V24_temperature = Mlx90614_read_Register(MLX90614_TOBJ1);
 		if (V24_elementFromArray_read == 0 )tmpTemperature = map(V24_counterTime,0,V24_Time_array[0],V24_DEFAULT_TEMPERATURE,(float)V24_Temperature_array[0]);
 		else tmpTemperature = map(V24_counterTime,V24_Time_array[V24_elementFromArray_read-1],V24_Time_array[V24_elementFromArray_read],V24_Temperature_array[V24_elementFromArray_read-1],V24_Temperature_array[V24_elementFromArray_read]);
 
@@ -110,7 +109,7 @@ void V24V_recalculate_PWM()
 
 			TA0CCR2 = TA0CCRx_temporar;
 
-		print("%f,%f,%d,%d\n",V24_counterTime,tmpTemperature,V24_temperature,TA0CCR2);
+		print("%f,%f,%f,%d\n",V24_counterTime,tmpTemperature,V24_temperature,TA0CCR2);
 
 		if ( (uint8)V24_counterTime >= V24_Time_array[V24_elementFromArray_read] ) {V24_elementFromArray_read++;}
 
