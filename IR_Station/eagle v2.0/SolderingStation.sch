@@ -7097,14 +7097,6 @@ at 30/07/2012 17:45:58</description>
 <wire x1="304.8" y1="106.68" x2="327.66" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="DATA_DISPLAY" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="5"/>
-<label x="176.53" y="48.514" size="1.27" layer="95" rot="R180" xref="yes"/>
-<wire x1="179.07" y1="48.514" x2="150.876" y2="48.514" width="0.1524" layer="91"/>
-<pinref part="JP6" gate="A" pin="1"/>
-</segment>
-</net>
 <net name="TEST" class="0">
 <segment>
 <pinref part="JP10" gate="A" pin="1"/>
@@ -7123,10 +7115,10 @@ at 30/07/2012 17:45:58</description>
 </net>
 <net name="220V_DRIVER_UC" class="0">
 <segment>
-<pinref part="U1" gate="G$1" pin="21"/>
-<label x="229.87" y="40.894" size="1.27" layer="95" xref="yes"/>
-<wire x1="226.06" y1="40.894" x2="254" y2="40.894" width="0.1524" layer="91"/>
-<pinref part="JP9" gate="A" pin="3"/>
+<pinref part="U1" gate="G$1" pin="5"/>
+<label x="176.53" y="48.514" size="1.27" layer="95" rot="R180" xref="yes"/>
+<wire x1="179.07" y1="48.514" x2="150.876" y2="48.514" width="0.1524" layer="91"/>
+<pinref part="JP6" gate="A" pin="1"/>
 </segment>
 </net>
 <net name="LATCH_DISPLAY" class="0">
@@ -7201,6 +7193,14 @@ at 30/07/2012 17:45:58</description>
 <pinref part="LED1" gate="G$1" pin="A"/>
 <pinref part="JP1" gate="G$1" pin="1"/>
 <wire x1="104.648" y1="215.9" x2="99.06" y2="215.9" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="DATA_DISPLAY" class="0">
+<segment>
+<pinref part="U1" gate="G$1" pin="21"/>
+<label x="229.87" y="40.894" size="1.27" layer="95" xref="yes"/>
+<wire x1="226.06" y1="40.894" x2="254" y2="40.894" width="0.1524" layer="91"/>
+<pinref part="JP9" gate="A" pin="3"/>
 </segment>
 </net>
 </nets>
